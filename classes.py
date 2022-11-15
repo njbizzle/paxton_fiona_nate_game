@@ -48,14 +48,19 @@ class screen:
         self.load_func()
 
 class button(pygame.sprite.Sprite):
-    def __init__(self, text, position, size, bg_color = (255,255,255), text_color=(0,0,0), on_hover=None, on_press=None, on_click=None):
+    def __init__(self, text, position=None, size=None, rect=None, bg_color = (255,255,255), text_color=(0,0,0), on_hover=None, on_press=None, on_click=None):
         pygame.sprite.Sprite.__init__(self)
         self.text = text
         self.position = position
         self.size = size
 
         self.state = "not_pressed"
-        self.rect = pygame.rect((position[0] + size[0]/2, position[1] + size[1]/2),(size[1], size[1],))
+
+        if rect:
+            self.rect = rect
+        else:
+            self.rect = pygame.rect((position[0] + size[0]/2, position[1] + size[1]/2),(size[1], size[1],))
+
         self.surf = pygame.Surface((self.rect.w, self.rect.h))
 
         self.bg_color = bg_color
@@ -72,13 +77,17 @@ class button(pygame.sprite.Sprite):
         if self.rect.collidepoint(mouse_pos):
             if mouse_click:
                 if self.state == "not_pressed":
-                    self.on_click()
+                    if self.on_click:
+                        self.on_click()
                     self.state = "clicked"
                 else:
-                    self.on_press()
+                    if self.on_press:
+                        self.on_press()
                     self.state = "pressed"
             else:
-                self.on_hover()
+                if self.on_hover:
+                    self.on_hover()
+                self.state = "not_pressed"
         else:
             self.state = "not_pressed"
 
