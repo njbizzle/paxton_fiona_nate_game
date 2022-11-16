@@ -1,9 +1,10 @@
 from ui_objects import *
+from camera import camera
+vec = pygame.math.Vector2
 
 all_sprites = pygame.sprite.Group()
 
 # button ui
-
 next_screen_button_pressed = False
 
 def next_screen_button_click():
@@ -14,8 +15,6 @@ next_screen_button = button("to title screen", rect=pygame.Rect((1000,500), (100
 
 all_sprites.add(next_screen_button)
 all_sprites.add(next_screen_button.text_sprite)
-
-
 
 def game_screen_init():
     pass
@@ -34,6 +33,9 @@ def game_screen_update():
         next_screen = get_screens()["title_screen"]
     else:
         next_screen = None
+    
+    for sprite in camera.get_displayed_sprites(vec(0,0),vec(1600,900),200):
+        all_sprites.add(sprite)
 
     return {"sprite_group":all_sprites, "next_screen":next_screen}
 

@@ -35,7 +35,7 @@ def title_screen_load():
     next_screen_button_pressed = False
 
 def title_screen_update():
-    global time_update, button_pressed
+    global time_update
 
     keys_pressed = pygame.key.get_pressed()
 
