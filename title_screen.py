@@ -1,9 +1,9 @@
 from ui_objects import *
 from datetime import datetime
 
-time_init = text("0", (100,100), (0,255,0), get_font(30))
-time_loaded = text("0", (100,200), (0,255,0), get_font(30))
-time_update = text("0", (100,300), (0,255,0), get_font(30))
+time_init = text("0", (200,100), (0,255,0), get_font(30))
+time_loaded = text("0", (200,200), (0,255,0), get_font(30))
+time_update = text("0", (200,300), (0,255,0), get_font(30))
 
 all_sprites = pygame.sprite.Group()
 
