@@ -7,7 +7,7 @@ class Worldmap:
     def add_sprite(self, sprite):
         self.worldmap_sprites.add(sprite)
             
-    def get_object_at_tile_range(self, xmin_max, ymin_max):
+    def get_objects_in_tile_range(self, xmin_max, ymin_max):
         xmin = xmin_max[0]
         xmax = xmin_max[1]
 
@@ -21,6 +21,16 @@ class Worldmap:
                 continue
             if not(pos[1] > ymin and pos[1] < ymax): # skip it if its out of y range
                 continue
+            sprites_in_range.append(sprite)
+
+        return sprites_in_range
+
+    def get_object_in_rect(self, camera_rect):
+        sprites_in_range = []
+
+        for sprite in self.worldmap_sprites:
+            if pygame.Rect.colliderect(camera_rect, sprite.rect):
+                pass
             sprites_in_range.append(sprite)
 
         return sprites_in_range

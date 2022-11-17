@@ -13,7 +13,7 @@ class Camera:
     def __init__(self):
         pass
 
-    def get_displayed_sprites_range(self, pos_ws, size, wm_scale):
+    def get_displayed_sprites(self, pos_ws, size, wm_scale, use_rect_colliders = False):
         if wm_scale < 1:
             wm_scale = 1
 
@@ -32,9 +32,13 @@ class Camera:
         wall_t = round(pos_ws.y + display_tile_w/2)
         wall_t_render = round(pos_ws.y + display_tile_w/2) + RENDER_BUFFER
 
-
         # gets [surface, position in wm]
-        visable_sprites_wm = worldmap.get_object_at_tile_range((wall_l_render,wall_r_render),(wall_b_render,wall_t_render))
+        if use_rect_colliders:
+            camera_rect = pygame.Rect(wall_l, wall_t, wall_r-wall_l, wall_t-wall_b) # uses rect collision
+            print(camera_rect)
+            visable_sprites_wm = worldmap.get_object_in_rect(camera_rect)
+        else:
+            visable_sprites_wm = worldmap.get_objects_in_tile_range((wall_l_render,wall_r_render),(wall_b_render,wall_t_render))
 
         visable_sprites_camera = []
 
