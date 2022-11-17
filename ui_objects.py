@@ -14,14 +14,17 @@ def get_screens(): # returns the screens dict
     return screens
 
 class text(pygame.sprite.Sprite): # class for easier text creation
-    def __init__(self, text_content, pos, color=(255,255,255), font=get_font(20)):
+    def __init__(self, text_content, pos, color=(255,255,255), font=get_font(20), group = None):
         pygame.sprite.Sprite.__init__(self) # inherits the pygame sprite class
-
         self.color = color
         self.font = font
         self.text_content = text_content
         self.surf = self.font.render(self.text_content, True, self.color) # render the font as a surface
         self.rect = self.surf.get_rect(center=pos) # convert position into a rect
+
+        self.group = group
+        if self.group != None:
+            self.group.add(self)
 
     # changes the text if needed
     def update_text(self, updated_text):
@@ -53,7 +56,7 @@ class screen: # class for managing differnt screens
         self.load_func()
 
 class button(pygame.sprite.Sprite): # easier button creation
-    def __init__(self, text_content, position=None, size=None, rect=None, bg_color = (100,100,100), text_color=(0,0,0), on_hover=None, on_press=None, on_click=None):
+    def __init__(self, text_content, position=None, size=None, rect=None, bg_color = (100,100,100), text_color=(0,0,0), on_hover=None, on_press=None, on_click=None, group = None):
         pygame.sprite.Sprite.__init__(self)
         self.position = position
         self.size = size
@@ -77,6 +80,10 @@ class button(pygame.sprite.Sprite): # easier button creation
         self.on_press = on_press # runs when pressed
         self.on_click = on_click # runs when clicked
 
+        self.group = group
+        if self.group != None:
+            self.group.add(self)
+            self.group.add(self.text_sprite)
         
 
     def check_click(self):

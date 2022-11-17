@@ -13,29 +13,30 @@ class Camera:
     def __init__(self):
         pass
 
-    def get_displayed_sprites(self, pos_ws, size, wm_scale, use_rect_colliders = False):
+    def get_displayed_sprites(self, pos_ws, size, wm_scale, use_rect_colliders = False, render_everything = False):
         if wm_scale < 1:
             wm_scale = 1
 
         display_tile_h = size.x/wm_scale
         display_tile_w = size.y/wm_scale
 
-        wall_l = round(pos_ws.x - display_tile_h/2)
-        wall_l_render = round(pos_ws.x - display_tile_h/2) - RENDER_BUFFER
+        wall_l = (pos_ws.x - display_tile_h/2)
+        wall_l_render = (pos_ws.x - display_tile_h/2) - RENDER_BUFFER
 
-        wall_r = round(pos_ws.x + display_tile_h/2)
-        wall_r_render = round(pos_ws.x + display_tile_h/2) + RENDER_BUFFER
+        wall_r = (pos_ws.x + display_tile_h/2)
+        wall_r_render = (pos_ws.x + display_tile_h/2) + RENDER_BUFFER
 
-        wall_b = round(pos_ws.y - display_tile_w/2)
-        wall_b_render = round(pos_ws.y - display_tile_w/2) - RENDER_BUFFER
+        wall_b = (pos_ws.y - display_tile_w/2)
+        wall_b_render = (pos_ws.y - display_tile_w/2) - RENDER_BUFFER
         
-        wall_t = round(pos_ws.y + display_tile_w/2)
-        wall_t_render = round(pos_ws.y + display_tile_w/2) + RENDER_BUFFER
+        wall_t = (pos_ws.y + display_tile_w/2)
+        wall_t_render = (pos_ws.y + display_tile_w/2) + RENDER_BUFFER
 
         # gets [surface, position in wm]
-        if use_rect_colliders:
+        if render_everything:
+            visable_sprites_wm = worldmap.get_all_sprites()
+        elif use_rect_colliders:
             camera_rect = pygame.Rect(wall_l, wall_t, wall_r-wall_l, wall_t-wall_b) # uses rect collision
-            print(camera_rect)
             visable_sprites_wm = worldmap.get_object_in_rect(camera_rect)
         else:
             visable_sprites_wm = worldmap.get_objects_in_tile_range((wall_l_render,wall_r_render),(wall_b_render,wall_t_render))

@@ -30,9 +30,11 @@ class Worldmap:
 
         for sprite in self.worldmap_sprites:
             if pygame.Rect.colliderect(camera_rect, sprite.rect):
-                pass
-            sprites_in_range.append(sprite)
+                sprites_in_range.append(sprite)
 
         return sprites_in_range
+
+    def get_all_sprites(self):
+        return self.worldmap_sprites
 
 worldmap = Worldmap()

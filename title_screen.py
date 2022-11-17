@@ -1,11 +1,11 @@
 from ui_objects import *
 from datetime import datetime
 
-time_init = text("0", (200,100), (0,255,0), get_font(30))
-time_loaded = text("0", (200,200), (0,255,0), get_font(30))
-time_update = text("0", (200,300), (0,255,0), get_font(30))
-
 all_sprites = pygame.sprite.Group()
+
+time_init = text("0", (200,100), (0,255,0), get_font(30), all_sprites)
+time_loaded = text("0", (200,200), (0,255,0), get_font(30), all_sprites)
+time_update = text("0", (200,300), (0,255,0), get_font(30), all_sprites)
 
 next_screen_button_pressed = False
 
@@ -13,25 +13,20 @@ def next_screen_button_click():
     global next_screen_button_pressed
     next_screen_button_pressed = True
 
-next_screen_button = button("to game screen", rect=pygame.Rect((500,500),(100,100)), on_click=next_screen_button_click)
+next_screen_button = button("to game screen", rect=pygame.Rect((500,500),(100,100)), on_click=next_screen_button_click, group=all_sprites)
 
-all_sprites.add(next_screen_button)
-all_sprites.add(next_screen_button.text_sprite)
 
 def update_time(text_sprite):
-    all_sprites.remove(text_sprite)
-    text_ =  text(f"{str(datetime.now())} title screen", (text_sprite.rect.center), (0,0,0), text_sprite.font)
-    all_sprites.add(text_)
-    return text_
+    text_sprite.update_text(f"{str(datetime.now())} title screen")
 
 def title_screen_init():
     global time_init
-    time_init = update_time(time_init)
+    update_time(time_init)
 
 def title_screen_load():
     global time_loaded, next_screen_button_pressed
 
-    time_loaded = update_time(time_loaded)
+    update_time(time_loaded)
     next_screen_button_pressed = False
 
 def title_screen_update():
@@ -45,7 +40,7 @@ def title_screen_update():
     else:
         next_screen = None
     
-    time_update = update_time(time_update)
+    update_time(time_update)
 
 
     return {"sprite_group":all_sprites, "next_screen":next_screen}

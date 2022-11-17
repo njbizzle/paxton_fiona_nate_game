@@ -20,7 +20,7 @@ pygame.display.set_caption("Game")
 import title_screen, game_screen # runs the files and create the screen objects
 
 current_screen = get_screens()["title_screen"] # set the first screen
-current_screen.load() # load the first scree
+current_screen.load() # load the first screen
 
 while True: # loop
     displaysurface.fill((255,255,255)) # fill bg to cover up previous frame

@@ -9,6 +9,10 @@ WIDTH = 1600
 
 non_camera_sprites = pygame.sprite.Group()
 
+camera_pos_text = text("x: 0, y 0", (200,100), (0,0,0), get_font(30), non_camera_sprites)
+camera_scale_text = text("scale: 0", (200,200), (0,0,0), get_font(30), non_camera_sprites)
+objects_rendered_text = text("objects_rendered: 0", (200,300), (0,0,0), get_font(30), non_camera_sprites)
+
 # button ui
 next_screen_button_pressed = False
 
@@ -16,15 +20,17 @@ def next_screen_button_click():
     global next_screen_button_pressed
     next_screen_button_pressed = True
 
-next_screen_button = button("to title screen", rect=pygame.Rect((1000,500), (100,100)), on_click=next_screen_button_click)
+next_screen_button = button("to title screen", rect=pygame.Rect((1000,500), (100,100)), on_click=next_screen_button_click, group=non_camera_sprites)
 
 non_camera_sprites.add(next_screen_button)
 non_camera_sprites.add(next_screen_button.text_sprite)
 
 def game_screen_init():
     test_rect1 = Test_rect(pygame.Rect((0,0), (1, 1)), (255,0,0))
-    test_rect1 = Test_rect(pygame.Rect((-5,5), (2, 2)), (0,255,0))
-    test_rect1 = Test_rect(pygame.Rect((-5,2), (1, 1)), (0,0,255))
+    test_rect2 = Test_rect(pygame.Rect((-5,5), (1, 2)), (0,255,0))
+    test_rect3 = Test_rect(pygame.Rect((-5,2), (2, 1)), (0,0,255))
+    test_rect4 = Test_rect(pygame.Rect((-1.5,-1.5), (1, 1)), (0,0,0))
+    test_rect4 = Test_rect(pygame.Rect((4,-4), (3, 1)), (255,0,255))
 
 def game_screen_load():
     global next_screen_button_pressed, camera_x, camera_y, camera_scale
@@ -45,10 +51,13 @@ def game_screen_update():
     if keys_pressed[pygame.K_RIGHT]:
         camera_x+=0.1
 
-    if keys_pressed[pygame.K_q]:
+    if keys_pressed[pygame.K_z]:
         camera_scale+=3
-    if keys_pressed[pygame.K_w]:
+    if keys_pressed[pygame.K_x]:
         camera_scale-=3
+
+    if camera_scale < 1:
+        camera_scale = 1
 
     next_screen_button.check_click()
     if next_screen_button_pressed == True:
@@ -58,8 +67,12 @@ def game_screen_update():
     
     all_sprites = pygame.sprite.Group()
 
-    for sprite in camera.get_displayed_sprites(vec(camera_x, camera_y),vec(WIDTH,HEIGHT), camera_scale, use_rect_colliders=True):
+    for sprite in camera.get_displayed_sprites(vec(camera_x, camera_y),vec(WIDTH,HEIGHT), camera_scale, render_everything=False):
         all_sprites.add(sprite)
+
+    camera_pos_text.update_text(f"x: {round(camera_x)}, y {round(camera_y)}")
+    camera_scale_text.update_text(f"scale: {camera_scale}")
+    objects_rendered_text.update_text(f"objects_rendered: {len(all_sprites)}")
 
     for sprite in non_camera_sprites:
         all_sprites.add(sprite)
