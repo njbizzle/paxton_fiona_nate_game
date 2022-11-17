@@ -29,7 +29,7 @@ def game_screen_init():
     test_rect1 = Test_rect(pygame.Rect((0,0), (1, 1)), (255,0,0))
     test_rect2 = Test_rect(pygame.Rect((-5,5), (1, 2)), (0,255,0))
     test_rect3 = Test_rect(pygame.Rect((-5,2), (2, 1)), (0,0,255))
-    test_rect4 = Test_rect(pygame.Rect((-1.5,-1.5), (1, 1)), (0,0,0))
+    test_rect4 = Test_rect(pygame.Rect((-1,-1), (1, 1)), (0,0,0))
     test_rect4 = Test_rect(pygame.Rect((4,-4), (3, 1)), (255,0,255))
 
 def game_screen_load():
@@ -42,19 +42,24 @@ def game_screen_update():
 
     keys_pressed = pygame.key.get_pressed()
 
+    camera_speed = 0.1
+
+    if keys_pressed[pygame.K_LSHIFT]:
+        camera_speed = 0.5
+
     if keys_pressed[pygame.K_UP]:
-        camera_y+=0.1
+        camera_y+=camera_speed
     if keys_pressed[pygame.K_DOWN]:
-        camera_y-=0.1
+        camera_y-=camera_speed
     if keys_pressed[pygame.K_LEFT]:
-        camera_x-=0.1
+        camera_x-=camera_speed
     if keys_pressed[pygame.K_RIGHT]:
-        camera_x+=0.1
+        camera_x+=camera_speed
 
     if keys_pressed[pygame.K_z]:
-        camera_scale+=3
+        camera_scale+=camera_speed*20
     if keys_pressed[pygame.K_x]:
-        camera_scale-=3
+        camera_scale-=camera_speed*20
 
     if camera_scale < 1:
         camera_scale = 1
@@ -70,7 +75,7 @@ def game_screen_update():
     for sprite in camera.get_displayed_sprites(vec(camera_x, camera_y),vec(WIDTH,HEIGHT), camera_scale, render_everything=False):
         all_sprites.add(sprite)
 
-    camera_pos_text.update_text(f"x: {round(camera_x)}, y {round(camera_y)}")
+    camera_pos_text.update_text(f"x: {round(camera_x,2)}, y {round(camera_y,2)}")
     camera_scale_text.update_text(f"scale: {camera_scale}")
     objects_rendered_text.update_text(f"objects_rendered: {len(all_sprites)}")
 
