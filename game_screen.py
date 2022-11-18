@@ -7,7 +7,7 @@ vec = pygame.math.Vector2
 
 HEIGHT = 900
 WIDTH = 1600
-CAMERA_MIN = 50
+CAMERA_MIN = 10
 
 non_camera_sprites = pygame.sprite.Group()
 
@@ -30,20 +30,16 @@ def next_screen_button_click():
 def show_lines_click():
     global show_lines
     if show_lines:
-        show_lines_button.update_text("show lines")
         show_lines = False
     else:
-        show_lines_button.update_text("hide lines")
         show_lines = True
 
 
 def render_all_click():
     global render_all
     if render_all:
-        render_all_button.update_text("render all")
         render_all = False
     else:
-        render_all_button.update_text("render in camera")
         render_all = True
 
 reset_button = button("reset", rect=pygame.Rect((100,200), (200,50)), on_click=reset_button_click, group=non_camera_sprites)
