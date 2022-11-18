@@ -70,11 +70,12 @@ class button(pygame.sprite.Sprite): # easier button creation
 
         self.bg_color = bg_color
         self.text_color = text_color
-        self.text_sprite = text(text_content, (rect.center), color=text_color) # uses text class to render the text
+
+        self.text_content = text_content
+        self.text_sprite = text(text_content, (self.rect.center), color=self.text_color) # uses text class to render the text
 
         self.surf = pygame.Surface((self.rect.w, self.rect.h)) # creates button surface based on the rect
         self.surf.fill(self.bg_color) # fills in the bg color
-        self.surf.blit(self.text_sprite.surf, self.text_sprite.rect) # blits the text onto the bg
 
         self.on_hover = on_hover # runs when hovered
         self.on_press = on_press # runs when pressed
@@ -85,8 +86,12 @@ class button(pygame.sprite.Sprite): # easier button creation
             self.group.add(self)
             self.group.add(self.text_sprite)
         
+    def update_text(self, text_content):
+        self.text_content = text_content
+        self.text_sprite.update_text(text_content)
 
     def check_click(self):
+        print(self.text_content)
         mouse_pos = pygame.mouse.get_pos() # get variable storing the mouse position
         mouse_click = pygame.mouse.get_pressed()[0] # get varible storing if the mouse was clicked
 

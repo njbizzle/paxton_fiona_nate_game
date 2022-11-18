@@ -13,7 +13,7 @@ def next_screen_button_click():
     global next_screen_button_pressed
     next_screen_button_pressed = True
 
-next_screen_button = button("to game screen", rect=pygame.Rect((500,500),(100,100)), on_click=next_screen_button_click, group=all_sprites)
+next_screen_button = button("to game screen", rect=pygame.Rect((500,500),(200,50)), on_click=next_screen_button_click, group=all_sprites)
 
 
 def update_time(text_sprite):
