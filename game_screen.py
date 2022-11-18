@@ -51,8 +51,6 @@ next_screen_button = button("to title screen", rect=pygame.Rect((100,260), (200,
 show_lines_button = button("show lines", rect=pygame.Rect((100,320), (200,50)), on_click=show_lines_click, group=non_camera_sprites)
 render_all_button = button("render all", rect=pygame.Rect((100,380), (200,50)), on_click=render_all_click, group=non_camera_sprites)
 
-
-
 def game_screen_init():
     Test_rect(pygame.Rect((0,0), (1, 1)), (255,0,0))
     Test_rect(pygame.Rect((-5,5), (1, 2)), (0,255,0))

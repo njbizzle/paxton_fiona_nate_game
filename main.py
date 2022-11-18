@@ -6,7 +6,6 @@ from ui_objects import *
 pygame.init()
 vec = pygame.math.Vector2
 
-#hi
 # constants
 HEIGHT = 900
 WIDTH = 1600
