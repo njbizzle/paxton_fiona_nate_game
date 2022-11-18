@@ -31,16 +31,20 @@ def show_lines_click():
     global show_lines
     if show_lines:
         show_lines = False
+        show_lines_button.update_text("show lines")
     else:
         show_lines = True
+        show_lines_button.update_text("hide lines")
 
 
 def render_all_click():
     global render_all
     if render_all:
         render_all = False
+        render_all_button.update_text("render all")
     else:
         render_all = True
+        render_all_button.update_text("render in camera")
 
 reset_button = button("reset", rect=pygame.Rect((100,200), (200,50)), on_click=reset_button_click, group=non_camera_sprites)
 next_screen_button = button("to title screen", rect=pygame.Rect((100,260), (200,50)), on_click=next_screen_button_click, group=non_camera_sprites)

@@ -91,7 +91,6 @@ class button(pygame.sprite.Sprite): # easier button creation
         self.text_sprite.update_text(text_content)
 
     def check_click(self):
-        print(self.text_content)
         mouse_pos = pygame.mouse.get_pos() # get variable storing the mouse position
         mouse_click = pygame.mouse.get_pressed()[0] # get varible storing if the mouse was clicked
 
