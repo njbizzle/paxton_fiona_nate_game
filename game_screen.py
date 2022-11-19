@@ -2,7 +2,7 @@ from ui_objects import *
 from camera import camera
 from test_objects import Test_rect
 from datetime import datetime
-import math
+import math, noise
 
 vec = pygame.math.Vector2
 
@@ -53,6 +53,12 @@ show_lines_button = button("show lines", rect=pygame.Rect((100,320), (200,50)), 
 render_all_button = button("render all", rect=pygame.Rect((100,380), (200,50)), on_click=render_all_click, group=non_camera_sprites)
 
 def game_screen_init():
+    size = 100
+    for rect_x in range(-size,size):
+        for rect_y in range(-size,size):
+            noise_color = (noise.pnoise2(rect_x/size,rect_y/size)+1)/2*255
+            Test_rect(pygame.Rect((rect_x*100,rect_y*100), (100, 100)), (noise_color,noise_color,noise_color))
+
     Test_rect(pygame.Rect((0,0), (100, 100)), (255,0,0))
     Test_rect(pygame.Rect((-500,500), (100, 200)), (0,255,0))
     Test_rect(pygame.Rect((-250,200), (200, 100)), (0,0,255))
