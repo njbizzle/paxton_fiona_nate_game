@@ -3,10 +3,11 @@ import pygame, math
 
 HEIGHT = 900
 WIDTH = 1600
-RENDER_BUFFER = 10
+RENDER_BUFFER = 1000
 
 CAMERA_LINE_WIDTH = 1
-CAMERA_LINE_COLOR = (0,0,0)
+CAMERA_LINE_COLOR = (200,200,200)
+CAMERA_LINES_GRID_SIZE = (100,100)
 
 def convert_wm_surf(surf, wm_scale):
     surf_size = surf.get_size()
@@ -32,8 +33,6 @@ class Camera:
         pass
 
     def get_displayed_sprites(self, pos_ws, size, wm_scale, use_rect_colliders = False, render_everything = False, show_lines = False):
-        if wm_scale < 1:
-            wm_scale = 1
 
         display_tile_h = size.x/wm_scale
         display_tile_w = size.y/wm_scale
@@ -64,20 +63,17 @@ class Camera:
         if show_lines:
             lines = Empty_sprite(pygame.Surface((WIDTH,HEIGHT)), pygame.Rect(0,0,WIDTH,HEIGHT))
             lines.surf.fill((255,255,255))
-            for hor_line_pos in range(math.floor(wall_b), math.ceil(wall_t)):
-                pos_on_camera = wm_scale*(wall_t - hor_line_pos)
-                pygame.draw.line(lines.surf, CAMERA_LINE_COLOR, (0, pos_on_camera), (WIDTH, pos_on_camera), 1)
-                
-                #line_surf = pygame.Surface((WIDTH, CAMERA_LINE_WIDTH))
-                #line_surf.fill(CAMERA_LINE_COLOR)
 
-                #line_rect = pygame.Rect(0, wm_scale*(wall_t - hor_line_pos), 0, 0)
-                    #line_rect = pygame.Rect(wm_scale*(-wall_l + vert_line_pos), 0, 0, 0)
-                #visable_sprites_camera.append(Empty_sprite(line_surf, line_rect))
-                for vert_line_pos in range(math.floor(wall_l), math.ceil(wall_r)):
+            for hor_line_pos in range(math.floor(wall_b), math.ceil(wall_t)):
+                if hor_line_pos%CAMERA_LINES_GRID_SIZE[0] == 0:
+                    pos_on_camera = wm_scale*(wall_t - hor_line_pos)
+                    pygame.draw.line(lines.surf, CAMERA_LINE_COLOR, (0, pos_on_camera), (WIDTH, pos_on_camera), 1)
+
+            for vert_line_pos in range(math.floor(wall_l), math.ceil(wall_r)):
+                if vert_line_pos%CAMERA_LINES_GRID_SIZE[1] == 0:
                     pos_on_camera = wm_scale*(-wall_l + vert_line_pos)
                     pygame.draw.line(lines.surf, CAMERA_LINE_COLOR, (pos_on_camera, 0), (pos_on_camera, HEIGHT), CAMERA_LINE_WIDTH)
-                    
+                
             visable_sprites_camera.append(lines)
                 
 
