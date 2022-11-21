@@ -1,0 +1,43 @@
+import sys, random, time
+from pygame.locals import *
+from ui_objects import *
+
+# set up pygame
+pygame.init()
+vec = pygame.math.Vector2
+
+# constants
+HEIGHT = 900
+WIDTH = 1600
+FPS = 60
+
+FramePerSec = pygame.time.Clock()
+
+# display setup
+
+
+displaysurface = pygame.display.set_mode((WIDTH, HEIGHT))
+pygame.display.set_caption("Game")
+
+
+while True: # loop
+    displaysurface.fill((255,255,255)) # fill bg to cover up previous frame
+
+    for event in pygame.event.get(): # check if you quit
+        if event.type == QUIT:
+            pygame.quit()
+            sys.exit()
+
+    #returns {
+    # sprite_group:pygame.sprite.Group(),
+    # next_screen:screen to switch to, normally None
+    # }
+
+    rect = pygame.Rect(100, 100, 100, 100)
+    pygame.draw.rect(displaysurface, (255,0,0), rect)
+    print(rect.center)
+
+    pygame.draw.line(displaysurface, (0,255,0), rect.center, (0,0))
+    
+    pygame.display.update()
+    FramePerSec.tick(FPS)

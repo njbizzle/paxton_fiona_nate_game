@@ -1,5 +1,5 @@
 from ui_objects import *
-from camera import camera, set_camera_grid_size
+from camera import camera
 from test_objects import Test_rect
 from datetime import datetime
 import math, noise
@@ -65,12 +65,14 @@ def game_screen_init():
             for rect_y in range(-size,size):
                 noise_color = (noise.pnoise2(rect_x/size,rect_y/size)+1)/2*255
                 Test_rect(pygame.Rect((rect_x*100,rect_y*100), (100, 100)), (noise_color,noise_color,noise_color))
-
-    Test_rect(pygame.Rect((0,0), (100, 100)), (255,0,0))
+    
+    Test_rect(pygame.Rect((0,100), (100, 100)), (255,0,0))
+    '''
     Test_rect(pygame.Rect((-500,500), (100, 200)), (0,255,0))
     Test_rect(pygame.Rect((-250,200), (200, 100)), (0,0,255))
     Test_rect(pygame.Rect((-100,-50), (25, 25)), (0,0,0))
     Test_rect(pygame.Rect((400,-400), (300, 50)), (255,0,255))
+    '''
 
 def game_screen_load():
     global next_screen_button_pressed, camera_x, camera_y, camera_scale
