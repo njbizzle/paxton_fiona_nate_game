@@ -1,5 +1,5 @@
 from ui_objects import *
-from camera import camera, set_camera_grid_size
+from camera import camera
 from test_objects import Test_rect
 from datetime import datetime
 import math, noise
