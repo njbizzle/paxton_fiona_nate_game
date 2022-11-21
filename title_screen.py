@@ -14,6 +14,7 @@ def next_screen_button_click():
     next_screen_button_pressed = True
 
 next_screen_button = button("to game screen", rect=pygame.Rect((500,500),(200,50)), on_click=next_screen_button_click, group=all_sprites)
+test_slider = slider(pygame.Rect((500,350),(300,100)), 0, 50, 250, text_content="test", group=all_sprites)
 
 
 def update_time(text_sprite):
@@ -41,7 +42,7 @@ def title_screen_update():
         next_screen = None
     
     update_time(time_update)
-
+    test_slider.get_knob_value()
 
     return {"sprite_group":all_sprites, "next_screen":next_screen}
 

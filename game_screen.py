@@ -1,5 +1,5 @@
 from ui_objects import *
-from camera import camera
+from camera import camera, set_camera_grid_size
 from test_objects import Test_rect
 from datetime import datetime
 import math, noise
@@ -9,6 +9,12 @@ vec = pygame.math.Vector2
 HEIGHT = 900
 WIDTH = 1600
 CAMERA_MIN, CAMERA_MAX = 0.01,10
+
+CONTROLS = {"up":[pygame.K_UP, pygame.K_w], "down":[pygame.K_DOWN, pygame.K_s], "left":[pygame.K_LEFT, pygame.K_a], "right":[pygame.K_RIGHT, pygame.K_d],
+"zoom_in":[pygame.K_z], "zoom_out":[pygame.K_x]}
+
+def check_control(keys_pressed, key_name):
+    return [keys_pressed[key] for key in CONTROLS[key_name]]
 
 non_camera_sprites = pygame.sprite.Group()
 
@@ -53,11 +59,12 @@ show_lines_button = button("show lines", rect=pygame.Rect((100,320), (200,50)), 
 render_all_button = button("render all", rect=pygame.Rect((100,380), (200,50)), on_click=render_all_click, group=non_camera_sprites)
 
 def game_screen_init():
-    size = 100
-    for rect_x in range(-size,size):
-        for rect_y in range(-size,size):
-            noise_color = (noise.pnoise2(rect_x/size,rect_y/size)+1)/2*255
-            Test_rect(pygame.Rect((rect_x*100,rect_y*100), (100, 100)), (noise_color,noise_color,noise_color))
+    if False:
+        size = 100
+        for rect_x in range(-size,size):
+            for rect_y in range(-size,size):
+                noise_color = (noise.pnoise2(rect_x/size,rect_y/size)+1)/2*255
+                Test_rect(pygame.Rect((rect_x*100,rect_y*100), (100, 100)), (noise_color,noise_color,noise_color))
 
     Test_rect(pygame.Rect((0,0), (100, 100)), (255,0,0))
     Test_rect(pygame.Rect((-500,500), (100, 200)), (0,255,0))
@@ -82,18 +89,18 @@ def game_screen_update():
         camera_move_speed = 50
         camera_scale_speed = 10
 
-    if keys_pressed[pygame.K_UP]:
+    if True in check_control(keys_pressed, "up"):
         camera_y+=camera_move_speed
-    if keys_pressed[pygame.K_DOWN]:
+    if True in check_control(keys_pressed, "down"):
         camera_y-=camera_move_speed
-    if keys_pressed[pygame.K_LEFT]:
+    if True in check_control(keys_pressed, "left"):
         camera_x-=camera_move_speed
-    if keys_pressed[pygame.K_RIGHT]:
+    if True in check_control(keys_pressed, "right"):
         camera_x+=camera_move_speed
 
-    if keys_pressed[pygame.K_z]:
+    if True in check_control(keys_pressed, "zoom_in"):
         camera_scale = camera_scale*(1+1/camera_scale_speed)
-    if keys_pressed[pygame.K_x]:
+    if True in check_control(keys_pressed, "zoom_out"):
         camera_scale = camera_scale*(1-1/camera_scale_speed)
     
     if camera_scale < CAMERA_MIN:
