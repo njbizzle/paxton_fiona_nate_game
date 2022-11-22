@@ -1,17 +1,18 @@
 from ui_objects import *
 from camera import camera
 from test_objects import Test_rect
+
 from datetime import datetime
-import math, noise
+import math, noise, time
 
 vec = pygame.math.Vector2
 
 HEIGHT = 900
 WIDTH = 1600
-CAMERA_MIN, CAMERA_MAX = 0.01,10
+CAMERA_MIN, CAMERA_MAX = 0.06, 3
 
 CONTROLS = {"up":[pygame.K_UP, pygame.K_w], "down":[pygame.K_DOWN, pygame.K_s], "left":[pygame.K_LEFT, pygame.K_a], "right":[pygame.K_RIGHT, pygame.K_d],
-"zoom_in":[pygame.K_z], "zoom_out":[pygame.K_x]}
+"zoom_in":[pygame.K_z], "zoom_out":[pygame.K_x], "speed_up":[pygame.K_LSHIFT], "super_speed":[pygame.K_LCTRL]}
 
 def check_control(keys_pressed, key_name):
     return [keys_pressed[key] for key in CONTROLS[key_name]]
@@ -59,18 +60,14 @@ show_lines_button = button("show lines", rect=pygame.Rect((100,320), (200,50)), 
 render_all_button = button("render all", rect=pygame.Rect((100,380), (200,50)), on_click=render_all_click, group=non_camera_sprites)
 
 def game_screen_init():
-    if False:
-        size = 100
-        for rect_x in range(-size,size):
-            for rect_y in range(-size,size):
-                noise_color = (noise.pnoise2(rect_x/size,rect_y/size)+1)/2*255
-                Test_rect(pygame.Rect((rect_x*100,rect_y*100), (100, 100)), (noise_color,noise_color,noise_color))
-
-    Test_rect(pygame.Rect((0,0), (100, 100)), (255,0,0))
+    global rect_
+    rect_ = Test_rect(pygame.Rect((0,100), (100, 100)), (255,255,0))
+    '''
     Test_rect(pygame.Rect((-500,500), (100, 200)), (0,255,0))
     Test_rect(pygame.Rect((-250,200), (200, 100)), (0,0,255))
     Test_rect(pygame.Rect((-100,-50), (25, 25)), (0,0,0))
     Test_rect(pygame.Rect((400,-400), (300, 50)), (255,0,255))
+    '''
 
 def game_screen_load():
     global next_screen_button_pressed, camera_x, camera_y, camera_scale
@@ -80,13 +77,18 @@ def game_screen_load():
 def game_screen_update():
     global next_screen_button_pressed, camera_x, camera_y, camera_scale
 
+    #rect_.rect = pygame.Rect(rect_.rect.x+1, rect_.rect.y, rect_.rect.w, rect_.rect.h)
+
     keys_pressed = pygame.key.get_pressed()
 
     camera_move_speed = 10
     camera_scale_speed = 30
 
-    if keys_pressed[pygame.K_LSHIFT]:
+    if True in check_control(keys_pressed, "speed_up"):
         camera_move_speed = 50
+        camera_scale_speed = 10
+    elif True in check_control(keys_pressed, "super_speed"):
+        camera_move_speed = 500
         camera_scale_speed = 10
 
     if True in check_control(keys_pressed, "up"):
@@ -121,6 +123,7 @@ def game_screen_update():
     all_sprites = pygame.sprite.Group()
 
     displayed_sprites = camera.get_displayed_sprites(vec(camera_x, camera_y),vec(WIDTH,HEIGHT), camera_scale, show_lines=show_lines, render_everything=render_all)
+    
     for sprite in displayed_sprites:
         all_sprites.add(sprite)
 

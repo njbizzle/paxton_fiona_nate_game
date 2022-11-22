@@ -1,9 +1,9 @@
 from worldmap import worldmap
-import pygame, math
+import pygame, math, time
 
 HEIGHT = 900
 WIDTH = 1600
-RENDER_BUFFER = 1000
+RENDER_BUFFER = 100
 
 CAMERA_LINE_WIDTH = 1
 CAMERA_LINE_COLOR = (200,200,200)
@@ -33,6 +33,7 @@ class Camera:
         pass
 
     def get_displayed_sprites(self, pos_ws, size, wm_scale, use_rect_colliders = False, render_everything = False, show_lines = False):
+        time_stamp = time.time()
 
         display_tile_h = size.x/wm_scale
         display_tile_w = size.y/wm_scale
@@ -60,9 +61,13 @@ class Camera:
 
         visable_sprites_camera = []
 
+        for sprite in visable_sprites_wm:
+            new_surf, new_rect = convert_wm_sprite(sprite, wm_scale, wall_l, wall_t)
+            visable_sprites_camera.append(Empty_sprite(new_surf, new_rect))
+        
         if show_lines:
             lines = Empty_sprite(pygame.Surface((WIDTH,HEIGHT)), pygame.Rect(0,0,WIDTH,HEIGHT))
-            lines.surf.fill((255,255,255))
+            lines.surf.set_colorkey((0,0,0))
 
             for hor_line_pos in range(math.floor(wall_b), math.ceil(wall_t)):
                 if hor_line_pos%CAMERA_LINES_GRID_SIZE[0] == 0:
@@ -75,13 +80,7 @@ class Camera:
                     pygame.draw.line(lines.surf, CAMERA_LINE_COLOR, (pos_on_camera, 0), (pos_on_camera, HEIGHT), CAMERA_LINE_WIDTH)
                 
             visable_sprites_camera.append(lines)
-                
-
-        # convert to position on camera
-        for sprite in visable_sprites_wm:
-            new_surf, new_rect = convert_wm_sprite(sprite, wm_scale, wall_l, wall_t)
-            visable_sprites_camera.append(Empty_sprite(new_surf, new_rect))
-
+        
         return visable_sprites_camera # sprite class containing all the surfaces and their postion the camera
 
 camera = Camera()

@@ -138,7 +138,7 @@ class slider(pygame.sprite.Sprite): # easier button creation
         self.knob_color = knob_color
 
         self.text_content = text_content
-        self.text_sprite = text(text_content, (0,0), color=self.text_color) # uses text class to render the text
+        self.text_sprite = text(f"{text_content} ({self.value})", (0,0), color=self.text_color) # uses text class to render the text
 
         text_w, text_h = self.text_sprite.text_size
         self.text_pos = (self.rect.w/2-text_w/2, self.rect.h*0.25-text_h/2)
@@ -169,7 +169,6 @@ class slider(pygame.sprite.Sprite): # easier button creation
         mouse_x = mouse_pos[0] - self.rect.x
         mouse_y = mouse_pos[1] - self.rect.y
 
-        #print(mouse_x, mouse_y, self.knob_rect)
         if not mouse_click or not self.slider_rect.collidepoint((mouse_x, mouse_y)):
             return self.value
         
@@ -179,17 +178,10 @@ class slider(pygame.sprite.Sprite): # easier button creation
         self.draw_surf() # can be optomized
         pygame.draw.rect(self.surf, self.knob_color, self.knob_rect)
 
-        self.value = (knob_x-25/self.slider_length) * (self.slider_max - self.slider_min)
+        self.value = (knob_x-25)/self.slider_length * (self.slider_max - self.slider_min)
+        self.update_text(self.text_content)
         return self.value
 
     def update_text(self, text_content):
         self.text_content = text_content
-        self.text_sprite.update_text(text_content)
-
-    def slider_update(self):
-        mouse_pos = pygame.mouse.get_pos() # get variable storing the mouse position
-        mouse_click = pygame.mouse.get_pressed()[0] # get varible storing if the mouse was clicked
-
-        if self.rect.collidepoint(mouse_pos):
-            if mouse_click:
-                pass
+        self.text_sprite.update_text(f"{text_content} ({self.value})")
