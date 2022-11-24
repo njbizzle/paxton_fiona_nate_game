@@ -1,2 +1,7 @@
 __pycache__/
 *.pyc
+__pycache__/camera.cpython-311.pyc
+__pycache__/game_screen.cpython-311.pyc
+__pycache__/test_objects.cpython-311.pyc
+__pycache__/title_screen.cpython-311.pyc
+__pycache__/ui_objects.cpython-311.pyc

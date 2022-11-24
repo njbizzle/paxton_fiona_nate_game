@@ -122,7 +122,8 @@ def game_screen_update():
     
     all_sprites = pygame.sprite.Group()
 
-    displayed_sprites = camera.get_displayed_sprites(vec(camera_x, camera_y),vec(WIDTH,HEIGHT), camera_scale, show_lines=show_lines, render_everything=render_all)
+    camera.update_camera(vec(camera_x, camera_y),vec(WIDTH,HEIGHT), camera_scale, show_lines=show_lines, render_everything=render_all)
+    displayed_sprites = camera.get_displayed_sprites()
     
     for sprite in displayed_sprites:
         all_sprites.add(sprite)

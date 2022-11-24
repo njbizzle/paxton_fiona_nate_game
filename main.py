@@ -35,7 +35,7 @@ while True: # loop
     update_info = current_screen.update() # runs update on the current screen
 
     #returns {
-    # sprite_group:pygame.sprite.Group(),
+    # sprite_group:pygame.sprite.Group()
     # next_screen:screen to switch to, normally None
     # }
 

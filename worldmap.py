@@ -6,8 +6,19 @@ NOISE_DETAIL = 100 # size of noise rects
 
 NOISE_SCALE = 5000
 
-def get_noise(x,y):
-    return noise.pnoise2(x/NOISE_SCALE, y/NOISE_SCALE, octaves=4, persistence=0.5, lacunarity=2)
+class Noise_map:
+    def __init__(self, scale=5000, octaves=1, persistence=0.5, lacunarity=2):
+
+        self.scale = scale
+        self.octaves = octaves
+        self.persistence = persistence
+        self.lacunarity = lacunarity
+
+    def get_noise(self, coords):
+        return noise.pnoise2(coords[0]/self.scale, coords[1]/self.scale, octaves=self.octaves, persistence=self.persistence, lacunarity=self.lacunarity)
+
+height_map = Noise_map(scale=5000, octaves=3, persistence=0.5, lacunarity=2)
+tree_probability_map = Noise_map(scale=3000, octaves=1, persistence=0.5, lacunarity=2)
 
 class Chunk(pygame.sprite.Sprite):
     def __init__(self, pos):
@@ -28,12 +39,38 @@ class Chunk(pygame.sprite.Sprite):
 
     def generate(self):
         #self.surf.fill((random.randint(0,255), random.randint(0,255), random.randint(0,255)))
-
         for noise_x in range(-NOISE_DETAIL, CHUNK_SIZE[0]+NOISE_DETAIL*2, NOISE_DETAIL):
             for noise_y in range(-NOISE_DETAIL, CHUNK_SIZE[1]+NOISE_DETAIL*2, NOISE_DETAIL):
-                noise_color = (get_noise(noise_x+self.rect.left, noise_y-self.rect.top)+1)*255/2
-                pygame.draw.rect(self.surf, (noise_color, noise_color, noise_color), pygame.Rect(noise_x, noise_y, NOISE_DETAIL, NOISE_DETAIL))
 
+                coords = noise_x+self.rect.left, noise_y-self.rect.top
+
+                height_noise = height_map.get_noise(coords)
+                tree_probability = tree_probability_map.get_noise(coords)
+
+                height_noise_color = (height_noise+1)*255/2
+
+                square_color = (0, height_noise_color, 0)
+                sqaure_rect = pygame.Rect(noise_x, noise_y, NOISE_DETAIL, NOISE_DETAIL)
+
+                if height_noise < -0.22:
+                    square_color = (255, 200, 100) # sand
+                    tree_probability = 0
+
+                if height_noise < -0.25:
+                    square_color = (0, 100, 200) # water
+                    tree_probability = 0
+                else:
+                    pass
+
+                pygame.draw.rect(self.surf, square_color, sqaure_rect)
+
+                rand = random.randint(3,10)/10
+                if rand < ((height_noise+1)*0.3+(tree_probability+1)*0.7)/4:
+                    if random.randint(0, 10) == 0:
+                        pygame.draw.rect(self.surf, (100, 100, 100), pygame.Rect(noise_x, noise_y, NOISE_DETAIL*5, NOISE_DETAIL*5))
+                    else:
+                        pygame.draw.rect(self.surf, (80, 130, 0), sqaure_rect)
+                    
 class Worldmap:
     def __init__(self):
         self.worldmap_sprites =  pygame.sprite.Group()
@@ -79,12 +116,11 @@ class Worldmap:
         chunk_l = CHUNK_SIZE[0] * math.floor(xmin / CHUNK_SIZE[0])
         chunk_r = CHUNK_SIZE[0] * math.ceil(xmax / CHUNK_SIZE[0])
 
-        chunk_b = CHUNK_SIZE[1] * math.floor(ymin / CHUNK_SIZE[0])
-        chunk_t = CHUNK_SIZE[1] * math.ceil(ymax / CHUNK_SIZE[0])
+        chunk_b = CHUNK_SIZE[1] * math.floor(ymin / CHUNK_SIZE[1])
+        chunk_t = CHUNK_SIZE[1] * math.ceil(ymax / CHUNK_SIZE[1])
 
-        chunks_needed = []
         for chunk_x in range(chunk_l, chunk_r, CHUNK_SIZE[0]):
-            for chunk_y in range(chunk_b, chunk_t, CHUNK_SIZE[0]):
+            for chunk_y in range(chunk_b, chunk_t, CHUNK_SIZE[1]):
                 sprites_in_range.append(self.get_ground_tile((chunk_x, chunk_y+CHUNK_SIZE[1])))
         
         return sprites_in_range
