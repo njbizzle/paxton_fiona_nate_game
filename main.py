@@ -15,7 +15,6 @@ FramePerSec = pygame.time.Clock()
 
 # display setup
 
-
 displaysurface = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Game")
 
@@ -31,8 +30,9 @@ while True: # loop
         if event.type == QUIT:
             pygame.quit()
             sys.exit()
-
+    time_ = time.time()
     update_info = current_screen.update() # runs update on the current screen
+    print(f"time to update {round(time.time() - time_, 2)}")
 
     #returns {
     # sprite_group:pygame.sprite.Group()

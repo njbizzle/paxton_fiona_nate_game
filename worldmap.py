@@ -67,9 +67,9 @@ class Chunk(pygame.sprite.Sprite):
                 rand = random.randint(3,10)/10
                 if rand < ((height_noise+1)*0.3+(tree_probability+1)*0.7)/4:
                     if random.randint(0, 10) == 0:
-                        pygame.draw.rect(self.surf, (100, 100, 100), pygame.Rect(noise_x, noise_y, NOISE_DETAIL*5, NOISE_DETAIL*5))
+                        pygame.draw.rect(self.surf, (100, 100, 100), sqaure_rect)
                     else:
-                        pygame.draw.rect(self.surf, (80, 130, 0), sqaure_rect)
+                        pygame.draw.rect(self.surf, (100, 50, 0), sqaure_rect)
                     
 class Worldmap:
     def __init__(self):
