@@ -72,7 +72,7 @@ class Camera:
         for sprite in visable_sprites_wm:
             new_surf, new_rect = self.convert_wm_sprite(sprite)
             visable_sprites_camera.append(Empty_sprite(new_surf, new_rect))
-        print(f"time to convert sprites {round(time.time() - time_, 2)}")
+        #print(f"time to convert sprites {round(time.time() - time_, 2)}")
         
         if self.show_lines:
             lines = Empty_sprite(pygame.Surface((WIDTH,HEIGHT)), pygame.Rect(0,0,WIDTH,HEIGHT))

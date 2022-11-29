@@ -6,6 +6,9 @@ NOISE_DETAIL = 100 # size of noise rects
 
 NOISE_SCALE = 5000
 
+SEED = random.randint(0,999999999)
+print(SEED)
+
 class Noise_map:
     def __init__(self, scale=5000, octaves=1, persistence=0.5, lacunarity=2):
 
@@ -15,6 +18,7 @@ class Noise_map:
         self.lacunarity = lacunarity
 
     def get_noise(self, coords):
+        coords = [coords[0]+SEED, coords[1]+SEED]
         return noise.pnoise2(coords[0]/self.scale, coords[1]/self.scale, octaves=self.octaves, persistence=self.persistence, lacunarity=self.lacunarity)
 
 height_map = Noise_map(scale=5000, octaves=3, persistence=0.5, lacunarity=2)
