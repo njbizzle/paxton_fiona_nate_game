@@ -2,6 +2,8 @@ import sys, random, time
 from pygame.locals import *
 from ui_objects import *
 
+#test comment
+
 # set up pygame
 pygame.init()
 vec = pygame.math.Vector2
