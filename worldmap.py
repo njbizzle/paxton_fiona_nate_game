@@ -1,5 +1,4 @@
 import pygame, noise, math, random
-#https://stackoverflow.com/questions/55192764/how-to-randomize-the-seed-of-the-noise-library
 
 CHUNK_SIZE = (500,500)
 NOISE_DETAIL = 100 # size of noise rects
@@ -86,6 +85,7 @@ class Worldmap:
             return
 
         self.worldmap_sprites.add(sprite)
+        print("added sprite")
 
     def remove_sprite(self, sprite, is_ground_tile=False):
         if is_ground_tile:
@@ -109,13 +109,6 @@ class Worldmap:
         ymax = ymin_max[1]
 
         sprites_in_range = []
-        for sprite in self.worldmap_sprites:
-            pos = (sprite.rect.centerx, sprite.rect.centery-sprite.rect.h) # idk why, this is just what works
-            if not(pos[0] > xmin and pos[0] < xmax): # skip it if its out of x range
-                continue
-            if not(pos[1] > ymin and pos[1] < ymax): # skip it if its out of y range
-                continue
-            sprites_in_range.append(sprite)
         
         chunk_l = CHUNK_SIZE[0] * math.floor(xmin / CHUNK_SIZE[0])
         chunk_r = CHUNK_SIZE[0] * math.ceil(xmax / CHUNK_SIZE[0])
@@ -126,6 +119,16 @@ class Worldmap:
         for chunk_x in range(chunk_l, chunk_r, CHUNK_SIZE[0]):
             for chunk_y in range(chunk_b, chunk_t, CHUNK_SIZE[1]):
                 sprites_in_range.append(self.get_ground_tile((chunk_x, chunk_y+CHUNK_SIZE[1])))
+        
+        for sprite in self.worldmap_sprites:
+            pos = (sprite.rect.centerx, sprite.rect.centery-sprite.rect.h) # idk why, this is just what works
+            if not(pos[0] > xmin and pos[0] < xmax): # skip it if its out of x range
+                continue
+            if not(pos[1] > ymin and pos[1] < ymax): # skip it if its out of y range
+                continue
+            sprites_in_range.append(sprite)
+        
+        
         
         return sprites_in_range
 

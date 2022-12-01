@@ -1,9 +1,10 @@
 from ui_objects import *
 from camera import camera
+from game_timer import start_game_timer
 from test_objects import Test_rect
 
 from datetime import datetime
-import math, noise, time
+import math, noise, time, threading
 
 vec = pygame.math.Vector2
 
@@ -27,6 +28,7 @@ objects_rendered_text = text("objects_rendered: 0", (200,150), (0,0,0), get_font
 next_screen_button_pressed = False
 show_lines = False
 render_all = False
+show_ground = False
 
 def reset_button_click():
     game_screen_load()
@@ -54,30 +56,35 @@ def render_all_click():
         render_all = True
         render_all_button.update_text("render in camera")
 
+def show_ground_click():
+    global show_ground
+    if show_ground:
+        show_ground = False
+        show_ground_button.update_text("hide ground")
+    else:
+        show_ground = True
+        show_ground_button.update_text("show ground")
+
 reset_button = button("reset", rect=pygame.Rect((100,200), (200,50)), on_click=reset_button_click, group=non_camera_sprites)
 next_screen_button = button("to title screen", rect=pygame.Rect((100,260), (200,50)), on_click=next_screen_button_click, group=non_camera_sprites)
 show_lines_button = button("show lines", rect=pygame.Rect((100,320), (200,50)), on_click=show_lines_click, group=non_camera_sprites)
 render_all_button = button("render all", rect=pygame.Rect((100,380), (200,50)), on_click=render_all_click, group=non_camera_sprites)
+show_ground_button = button("hide ground", rect=pygame.Rect((100,380), (200,50)), on_click=show_ground_click, group=non_camera_sprites)
 
 def game_screen_init():
-    global rect_
-    rect_ = Test_rect(pygame.Rect((0,100), (100, 100)), (255,255,0))
-    '''
-    Test_rect(pygame.Rect((-500,500), (100, 200)), (0,255,0))
-    Test_rect(pygame.Rect((-250,200), (200, 100)), (0,0,255))
-    Test_rect(pygame.Rect((-100,-50), (25, 25)), (0,0,0))
-    Test_rect(pygame.Rect((400,-400), (300, 50)), (255,0,255))
-    '''
+    pass
 
 def game_screen_load():
     global next_screen_button_pressed, camera_x, camera_y, camera_scale
+
+    game_timer_thread = threading.Thread(target=start_game_timer)
+    game_timer_thread.start()
+
     next_screen_button_pressed = False
-    camera_x, camera_y, camera_scale = [0.0,0.0,1.000]
+    camera_x, camera_y, camera_scale = [0.0, 0.0, 1.0]
 
 def game_screen_update():
     global next_screen_button_pressed, camera_x, camera_y, camera_scale
-
-    #rect_.rect = pygame.Rect(rect_.rect.x+1, rect_.rect.y, rect_.rect.w, rect_.rect.h)
 
     keys_pressed = pygame.key.get_pressed()
 

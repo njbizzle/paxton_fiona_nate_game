@@ -23,6 +23,7 @@ class Camera:
 
         self.render_everything = False
         self.show_lines = False
+        self.show_ground = False
 
         self.wall_l = 0
         self.wall_l_buffer = 0
