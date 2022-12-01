@@ -1,4 +1,5 @@
 import pygame, noise, math, random
+from perlin_noise import PerlinNoise
 
 CHUNK_SIZE = (500,500)
 NOISE_DETAIL = 100 # size of noise rects
@@ -18,10 +19,13 @@ class Noise_map:
 
     def get_noise(self, coords):
         coords = [coords[0]+SEED, coords[1]+SEED]
-        return noise.pnoise2(coords[0]/self.scale, coords[1]/self.scale, octaves=self.octaves, persistence=self.persistence, lacunarity=self.lacunarity)
+        #return noise.pnoise2(coords[0]/self.scale, coords[1]/self.scale, octaves=self.octaves, persistence=self.persistence, lacunarity=self.lacunarity)
+        return noise([coords[0]/self.scale, coords[1]/self.scale])
 
-height_map = Noise_map(scale=5000, octaves=3, persistence=0.5, lacunarity=2)
+height_map = Noise_map(scale=30000, octaves=3, persistence=0.5, lacunarity=2)
 tree_probability_map = Noise_map(scale=3000, octaves=1, persistence=0.5, lacunarity=2)
+
+noise = PerlinNoise(octaves=3)
 
 class Chunk(pygame.sprite.Sprite):
     def __init__(self, pos):

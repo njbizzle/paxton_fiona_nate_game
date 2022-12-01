@@ -1,10 +1,12 @@
 from ui_objects import *
+
 from camera import camera
 from game_timer import start_game_timer
 from test_objects import Test_rect
+from player import player
 
 from datetime import datetime
-import math, noise, time, threading
+import math, time, threading
 
 vec = pygame.math.Vector2
 
