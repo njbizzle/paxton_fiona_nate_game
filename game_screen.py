@@ -1,7 +1,7 @@
 from ui_objects import *
 
 from camera import camera
-from game_timer import start_game_timer
+from game_timer import start_game_timer, update_enemies
 from test_objects import Test_rect
 from player import player
 
@@ -18,7 +18,13 @@ CONTROLS = {"up":[pygame.K_UP, pygame.K_w], "down":[pygame.K_DOWN, pygame.K_s], 
 "zoom_in":[pygame.K_z], "zoom_out":[pygame.K_x], "speed_up":[pygame.K_LSHIFT], "super_speed":[pygame.K_LCTRL]}
 
 def check_control(keys_pressed, key_name):
-    return [keys_pressed[key] for key in CONTROLS[key_name]]
+    if True in [keys_pressed[key] for key in CONTROLS[key_name]]:
+        return True
+    else:
+        return False
+
+def check_controls(keys_pressed, key_names):
+    return [check_control(keys_pressed, key_name) for key_name in key_names]
 
 non_camera_sprites = pygame.sprite.Group()
 
@@ -90,9 +96,9 @@ def game_screen_update():
 
     keys_pressed = pygame.key.get_pressed()
 
-    camera_move_speed = 10
+    camera_move_speed = 0.05
     camera_scale_speed = 30
-
+    '''
     if True in check_control(keys_pressed, "speed_up"):
         camera_move_speed = 50
         camera_scale_speed = 10
@@ -108,10 +114,13 @@ def game_screen_update():
         camera_x-=camera_move_speed
     if True in check_control(keys_pressed, "right"):
         camera_x+=camera_move_speed
+    '''
 
-    if True in check_control(keys_pressed, "zoom_in"):
+    player.update(check_controls(keys_pressed, ["up", "down", "left", "right"]))
+
+    if check_control(keys_pressed, "zoom_in"):
         camera_scale = camera_scale*(1+1/camera_scale_speed)
-    if True in check_control(keys_pressed, "zoom_out"):
+    if check_control(keys_pressed, "zoom_out"):
         camera_scale = camera_scale*(1-1/camera_scale_speed)
     
     if camera_scale < CAMERA_MIN:
@@ -131,13 +140,17 @@ def game_screen_update():
     
     all_sprites = pygame.sprite.Group()
 
+    player_pos = player.get_pos()
+
+    camera_x, camera_y = interpolate((camera_x, camera_y), player_pos, camera_move_speed)
+
     camera.update_camera(vec(camera_x, camera_y),vec(WIDTH,HEIGHT), camera_scale, show_lines=show_lines, render_everything=render_all)
     displayed_sprites = camera.get_displayed_sprites()
     
     for sprite in displayed_sprites:
         all_sprites.add(sprite)
 
-    camera_pos_text.update_text(f"x: {round(camera_x,2)}, y {round(camera_y,2)}")
+    camera_pos_text.update_text(f"x: {round(player_pos[0],2)}, y {round(player_pos[1],2)}")
     camera_scale_text.update_text(f"scale: {round(camera_scale, 2)}")
     objects_rendered_text.update_text(f"objects_rendered: {len(all_sprites)}")
 
@@ -147,3 +160,23 @@ def game_screen_update():
     return {"sprite_group":all_sprites, "next_screen":next_screen}
 
 game_screen = screen("game_screen", game_screen_init, game_screen_load, game_screen_update)
+
+def interpolate(vec1, vec2, num):
+    if num > 0.5:
+        print("hell nah")
+        return
+    x1,y1 = vec1
+    x2,y2 = vec2
+    
+    x_dif = x2-x1
+    y_dif = y2-y1
+    try:
+        return (x1+num*x_dif, y1+num*y_dif)
+    except:
+        return (x1,y1)
+
+vec1 = (20,20)
+vec2 = (10,10)
+for i in range(0,10):
+    vec1 = interpolate(vec1, vec2, 0.5)
+    print(vec1)
