@@ -12,7 +12,7 @@ vec = pygame.math.Vector2
 
 HEIGHT = 900
 WIDTH = 1600
-CAMERA_MIN, CAMERA_MAX = 0.06, 3
+CAMERA_MIN, CAMERA_MAX = 0.25, 3
 
 CONTROLS = {"up":[pygame.K_UP, pygame.K_w], "down":[pygame.K_DOWN, pygame.K_s], "left":[pygame.K_LEFT, pygame.K_a], "right":[pygame.K_RIGHT, pygame.K_d],
 "zoom_in":[pygame.K_z], "zoom_out":[pygame.K_x], "speed_up":[pygame.K_LSHIFT], "super_speed":[pygame.K_LCTRL]}
@@ -146,9 +146,6 @@ def game_screen_update():
 game_screen = screen("game_screen", game_screen_init, game_screen_load, game_screen_update)
 
 def interpolate(vec1, vec2, num):
-    if num > 0.5:
-        print("hell nah")
-        return
     x1,y1 = vec1
     x2,y2 = vec2
     
@@ -158,9 +155,3 @@ def interpolate(vec1, vec2, num):
         return (x1+num*x_dif, y1+num*y_dif)
     except:
         return (x1,y1)
-
-vec1 = (20,20)
-vec2 = (10,10)
-for i in range(0,10):
-    vec1 = interpolate(vec1, vec2, 0.5)
-    print(vec1)

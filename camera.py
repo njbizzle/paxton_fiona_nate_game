@@ -8,6 +8,8 @@ RENDER_BUFFER = 100 #equal to the radius of the largest sprite we have
 CAMERA_LINE_WIDTH = 1
 CAMERA_LINE_COLOR = (200,200,200)
 CAMERA_LINES_GRID_SIZE = (100,100)
+
+TIME_CHANGE_SPEED = 1
     
 class Empty_sprite(pygame.sprite.Sprite):
     def __init__(self, surf, rect):
@@ -25,6 +27,8 @@ class Camera:
         self.show_lines = False
         self.show_ground = False
 
+        self.is_night = False
+
         self.wall_l = 0
         self.wall_l_buffer = 0
 
@@ -37,6 +41,12 @@ class Camera:
         self.wall_t = 0
         self.wall_t_buffer = 0
 
+        self.dark_screen_opacity = 0
+        self.dark_screen_night_opacity = 150
+
+        self.night_screen_surf = pygame.Surface((WIDTH,HEIGHT))
+        self.night_screen_rect = self.night_screen_surf.get_rect(topleft=(0,0))
+
     def update_camera(self, pos_ws, size, wm_scale, use_rect_colliders = False, render_everything = False, show_lines = False):
         self.pos_ws = pos_ws
         self.size = size
@@ -44,6 +54,10 @@ class Camera:
 
         self.render_everything = render_everything
         self.show_lines = show_lines
+
+
+    def set_night(self, is_night):
+        self.is_night = is_night
 
     def get_displayed_sprites(self):
         display_tile_h = self.size.x/self.wm_scale
@@ -69,7 +83,7 @@ class Camera:
 
         visable_sprites_camera = []
 
-        time_ = time.time()
+        #time_ = time.time()
         for sprite in visable_sprites_wm:
             new_surf, new_rect = self.convert_wm_sprite(sprite)
             visable_sprites_camera.append(Empty_sprite(new_surf, new_rect))
@@ -91,6 +105,18 @@ class Camera:
                 
             visable_sprites_camera.append(lines)
         
+        if self.is_night:
+            if self.dark_screen_opacity != self.dark_screen_night_opacity:
+                self.dark_screen_opacity+=TIME_CHANGE_SPEED
+        else:
+            if self.dark_screen_opacity != 0:
+                self.dark_screen_opacity-=TIME_CHANGE_SPEED
+        
+        self.night_screen_surf.fill((0,0,0))
+        self.night_screen_surf.set_alpha(self.dark_screen_opacity)
+
+        visable_sprites_camera.append(Empty_sprite(self.night_screen_surf, self.night_screen_rect))
+
         return visable_sprites_camera # sprite class containing all the surfaces and their postion the camera
 
         

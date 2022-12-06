@@ -1,12 +1,15 @@
 import time, random, math, pygame, threading
 from enemies import Test_enemy
+from camera import camera
+from player import player
 #from main import add_thread, remove_thread
 
-DAY_TIME = 10 #seconds
-NIGHT_TIME = 10 #seconds
+DAY_TIME = 20 #seconds
+NIGHT_TIME = 20
+DAY_CHANGE_TIME = 3
 day_night = "day"
 
-ENEMY_SPAWN_CIRCLE = 1000 #radius
+ENEMY_SPAWN_CIRCLE = 3000 #radius
 enemy_wave = 0
 enemies = pygame.sprite.Group()
 
@@ -17,13 +20,21 @@ def start_game_timer():
         if day_night == "day":
             print("now day")
             day_start()
-            time.sleep(DAY_TIME)
+
+            time.sleep(DAY_TIME-DAY_CHANGE_TIME)
+            camera.set_night(True)
+            time.sleep(DAY_CHANGE_TIME)
+
             day_night = "night"
 
         elif day_night == "night":
             print("now night")
             night_start()
-            time.sleep(NIGHT_TIME)
+
+            time.sleep(NIGHT_TIME-DAY_CHANGE_TIME)
+            camera.set_night(False)
+            time.sleep(DAY_CHANGE_TIME)
+
             day_night = "day"
 
 def day_start():
@@ -47,8 +58,10 @@ def spawn_enemies(wave):
     for enemy in wave:
         rand = random.randint(0, 2 * random_precision)/random_precision - 1
 
-        x = ENEMY_SPAWN_CIRCLE * math.cos(rand * 2 * math.pi)
-        y = ENEMY_SPAWN_CIRCLE * math.sin(rand * 2 * math.pi)
+        player_x, player_y = player.get_pos()
+
+        x = ENEMY_SPAWN_CIRCLE * math.cos(rand * 2 * math.pi) + player_x
+        y = ENEMY_SPAWN_CIRCLE * math.sin(rand * 2 * math.pi) + player_y
 
         enemies.add(Test_enemy((x, y)))
 

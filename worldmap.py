@@ -90,7 +90,6 @@ class Worldmap:
             return
 
         self.worldmap_sprites.add(sprite)
-        print("added sprite")
 
     def remove_sprite(self, sprite, is_ground_tile=False):
         if is_ground_tile:

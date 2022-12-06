@@ -36,7 +36,6 @@ class Test_enemy(pygame.sprite.Sprite):
 
         a = math.sqrt(self.speed**2/(x_dif**2 + y_dif**2))
         update_pos = (a*x_dif+pos_x, a*y_dif+pos_y)
-        print(self.pos, update_pos)
 
         self.pos = update_pos
         self.rect = self.surf.get_rect(center=self.pos)
