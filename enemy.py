@@ -30,4 +30,5 @@ class Enemy(pygame.sprite.Sprite):
         step = 2
         a = math.sqrt(step**2/(x_dif**2 + y_dif**2))
         update_pos = (a*x_dif+pos_x, a*y_dif+pos_y)
+        print(self.pos, update_pos)
         self.pos = update_pos

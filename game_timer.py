@@ -6,7 +6,7 @@ DAY_TIME = 10 #seconds
 NIGHT_TIME = 10 #seconds
 day_night = "day"
 
-ENEMY_SPAWN_CIRCLE = 10000 #radius
+ENEMY_SPAWN_CIRCLE = 1000 #radius
 enemy_wave = 0
 enemies = pygame.sprite.Group()
 
@@ -42,13 +42,21 @@ def night_start():
 
 def spawn_enemies(wave):
     global enemies
-    wait_times = []
-    random_precision = 10000
+    random_precision = 1000
 
+    for enemy in wave:
+        rand = random.randint(0, 2 * random_precision)/random_precision - 1
+
+        x = ENEMY_SPAWN_CIRCLE * math.cos(rand * 2 * math.pi)
+        y = ENEMY_SPAWN_CIRCLE * math.sin(rand * 2 * math.pi)
+
+        enemies.add(Test_enemy((x, y)))
+
+'''
+    wait_times = []
     for i in range(len(wave)):
         wait_times.append(time.time() + NIGHT_TIME / len(wave)*i)
 
-    print(f"wait_times = {wait_times}")
     current_enemy = 0
     while True:
         if current_enemy >= len(wave):
@@ -60,12 +68,11 @@ def spawn_enemies(wave):
             x = ENEMY_SPAWN_CIRCLE * math.cos(rand * 2 * math.pi)
             y = ENEMY_SPAWN_CIRCLE * math.sin(rand * 2 * math.pi)
 
-            enemies.add(Test_enemy(pygame.Rect(x, y, 100, 100)))
+            enemies.add(Test_enemy((x, y)))
             current_enemy += 1
-
+'''
 def update_enemies():
     global enemies
-    print("test timer")
     for enemy in enemies:
         enemy.update()
 

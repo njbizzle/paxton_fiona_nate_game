@@ -98,25 +98,9 @@ def game_screen_update():
 
     camera_move_speed = 0.05
     camera_scale_speed = 30
-    '''
-    if True in check_control(keys_pressed, "speed_up"):
-        camera_move_speed = 50
-        camera_scale_speed = 10
-    elif True in check_control(keys_pressed, "super_speed"):
-        camera_move_speed = 500
-        camera_scale_speed = 10
-
-    if True in check_control(keys_pressed, "up"):
-        camera_y+=camera_move_speed
-    if True in check_control(keys_pressed, "down"):
-        camera_y-=camera_move_speed
-    if True in check_control(keys_pressed, "left"):
-        camera_x-=camera_move_speed
-    if True in check_control(keys_pressed, "right"):
-        camera_x+=camera_move_speed
-    '''
-
+    
     player.update(check_controls(keys_pressed, ["up", "down", "left", "right"]))
+    update_enemies()
 
     if check_control(keys_pressed, "zoom_in"):
         camera_scale = camera_scale*(1+1/camera_scale_speed)

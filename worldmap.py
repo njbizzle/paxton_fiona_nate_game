@@ -17,15 +17,16 @@ class Noise_map:
         self.persistence = persistence
         self.lacunarity = lacunarity
 
-    def get_noise(self, coords):
-        coords = [coords[0]+SEED, coords[1]+SEED]
-        #return noise.pnoise2(coords[0]/self.scale, coords[1]/self.scale, octaves=self.octaves, persistence=self.persistence, lacunarity=self.lacunarity)
-        return noise([coords[0]/self.scale, coords[1]/self.scale])
+        self.noise = PerlinNoise(octaves=self.octaves, seed=SEED)
 
-height_map = Noise_map(scale=30000, octaves=3, persistence=0.5, lacunarity=2)
+    def get_noise(self, coords):
+        coords = [coords[0], coords[1]]
+        #return noise.pnoise2(coords[0]/self.scale, coords[1]/self.scale, octaves=self.octaves, persistence=self.persistence, lacunarity=self.lacunarity)
+        return self.noise([coords[0]/self.scale, coords[1]/self.scale])
+
+height_map = Noise_map(scale=10000, octaves=3, persistence=0.5, lacunarity=2)
 tree_probability_map = Noise_map(scale=3000, octaves=1, persistence=0.5, lacunarity=2)
 
-noise = PerlinNoise(octaves=3)
 
 class Chunk(pygame.sprite.Sprite):
     def __init__(self, pos):
@@ -59,11 +60,11 @@ class Chunk(pygame.sprite.Sprite):
                 square_color = (0, height_noise_color, 0)
                 sqaure_rect = pygame.Rect(noise_x, noise_y, NOISE_DETAIL, NOISE_DETAIL)
 
-                if height_noise < -0.22:
+                if height_noise < -0.25:
                     square_color = (255, 200, 100) # sand
                     tree_probability = 0
 
-                if height_noise < -0.25:
+                if height_noise < -0.3:
                     square_color = (0, 100, 200) # water
                     tree_probability = 0
                 else:
