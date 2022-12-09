@@ -9,7 +9,7 @@ NIGHT_TIME = 20
 DAY_CHANGE_TIME = 3
 day_night = "day"
 
-ENEMY_SPAWN_CIRCLE = 3000 #radius
+ENEMY_SPAWN_CIRCLE = 5000 #radius
 enemy_wave = 0
 enemies = pygame.sprite.Group()
 

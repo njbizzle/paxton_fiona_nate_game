@@ -36,7 +36,7 @@ class Noise_map:
         return self.noise([coords[0]/self.scale, coords[1]/self.scale])
 
 height_map = Noise_map(scale=10000, octaves=3, persistence=0.5, lacunarity=2)
-tree_probability_map = Noise_map(scale=3000, octaves=1, persistence=0.5, lacunarity=2)
+tree_probability_map = Noise_map(scale=10000, octaves=1, persistence=0.5, lacunarity=2)
 
 class Chunk(pygame.sprite.Sprite):
     def __init__(self, pos):
@@ -69,7 +69,7 @@ class Chunk(pygame.sprite.Sprite):
                 square_color = (0, height_noise_color, 0)
                 sqaure_rect = pygame.Rect(noise_x, noise_y, NOISE_DETAIL, NOISE_DETAIL)
 
-                if height_noise < -0.225:
+                if height_noise < -0.22:
                     square_color = (255, 200, 100) # sand
                     tree_probability = 0
                     worldmap.noise_squares[coords] = "sand"
@@ -82,8 +82,8 @@ class Chunk(pygame.sprite.Sprite):
 
                 pygame.draw.rect(self.surf, square_color, sqaure_rect)
 
-                rand = random.randint(3,10)/10
-                if rand < ((height_noise+1)*0.3+(tree_probability+1)*0.7)/4:
+                rand = random.randint(0,200)/100
+                if rand < (height_noise+tree_probability)/8:
                     try:
                         Tree(coords)
                     except:

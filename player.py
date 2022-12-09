@@ -51,7 +51,8 @@ class Player(pygame.sprite.Sprite):
             laser = Laser(Player.get_pos()) # when space is clicked, laser shoots
 
         if pygame.sprite.spritecollide(self, worldmap.active_collision_sprites, False):
-            print("stuff is colliding but i dont know what do do about it")
+            #print("stuff is colliding but i dont know what do do about it")
+            pass
         
         self.vel = max(-self.max_speed, min(self.vel[0]*self.friction, self.max_speed)), max(-self.max_speed, min(self.vel[1]*self.friction, self.max_speed))
         self.rect = pygame.Rect(add_vec(self.get_pos(), self.vel), self.size)
