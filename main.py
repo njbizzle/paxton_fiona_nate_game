@@ -13,7 +13,6 @@ HEIGHT = 900
 WIDTH = 1600
 FPS = 60
 
-
 FramePerSec = pygame.time.Clock()
 
 # display setup
@@ -46,7 +45,7 @@ while True: # loop
     
     update_info = current_screen.update() # runs update on the current screen
 
-    #returns {
+    # returns {
     # sprite_group:pygame.sprite.Group(),
     # next_screen:screen to switch to, normally None
     # }

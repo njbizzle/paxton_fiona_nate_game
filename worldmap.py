@@ -1,13 +1,24 @@
 import pygame, noise, math, random
 from perlin_noise import PerlinNoise
-
-CHUNK_SIZE = (500,500)
+CHUNK_SIZE = (500, 500)
 NOISE_DETAIL = 100 # size of noise rects
 
 NOISE_SCALE = 5000
 
 SEED = random.randint(0,999999999)
 print(SEED)
+
+def area_round(size, coords, radius=[0,0], area=True):
+    if not(area):
+        coords = [coords[0],coords[0],coords[1],coords[1]]
+
+    x_min = math.floor((coords[0] - radius[0])/size[0]) * size[0]
+    x_max = math.ceil((coords[1] + radius[0])/size[0]) * size[0]
+
+    y_min = math.floor((coords[2] - radius[1])/size[1]) * size[1]
+    y_max = math.ceil((coords[3] + radius[1])/size[1]) * size[1]
+
+    return (x_min, x_max, y_min, y_max)
 
 class Noise_map:
     def __init__(self, scale=5000, octaves=1, persistence=0.5, lacunarity=2):
@@ -27,7 +38,6 @@ class Noise_map:
 height_map = Noise_map(scale=10000, octaves=3, persistence=0.5, lacunarity=2)
 tree_probability_map = Noise_map(scale=3000, octaves=1, persistence=0.5, lacunarity=2)
 
-
 class Chunk(pygame.sprite.Sprite):
     def __init__(self, pos):
         super().__init__()
@@ -46,11 +56,10 @@ class Chunk(pygame.sprite.Sprite):
         worldmap.remove_sprite(self, is_ground_tile=True)
 
     def generate(self):
-        #self.surf.fill((random.randint(0,255), random.randint(0,255), random.randint(0,255)))
         for noise_x in range(-NOISE_DETAIL, CHUNK_SIZE[0]+NOISE_DETAIL*2, NOISE_DETAIL):
             for noise_y in range(-NOISE_DETAIL, CHUNK_SIZE[1]+NOISE_DETAIL*2, NOISE_DETAIL):
 
-                coords = noise_x+self.rect.left, noise_y-self.rect.top
+                coords = noise_x+self.rect.left, -noise_y+self.rect.top
 
                 height_noise = height_map.get_noise(coords)
                 tree_probability = tree_probability_map.get_noise(coords)
@@ -60,29 +69,34 @@ class Chunk(pygame.sprite.Sprite):
                 square_color = (0, height_noise_color, 0)
                 sqaure_rect = pygame.Rect(noise_x, noise_y, NOISE_DETAIL, NOISE_DETAIL)
 
-                if height_noise < -0.25:
+                if height_noise < -0.225:
                     square_color = (255, 200, 100) # sand
                     tree_probability = 0
+                    worldmap.noise_squares[coords] = "sand"
 
-                if height_noise < -0.3:
+                if height_noise < -0.25:
                     square_color = (0, 100, 200) # water
-                    tree_probability = 0
+                    worldmap.noise_squares[coords] = "water"
                 else:
-                    pass
+                    worldmap.noise_squares[coords] = "none"
 
                 pygame.draw.rect(self.surf, square_color, sqaure_rect)
 
                 rand = random.randint(3,10)/10
                 if rand < ((height_noise+1)*0.3+(tree_probability+1)*0.7)/4:
-                    if random.randint(0, 10) == 0:
-                        pygame.draw.rect(self.surf, (100, 100, 100), sqaure_rect)
-                    else:
-                        pygame.draw.rect(self.surf, (100, 50, 0), sqaure_rect)
+                    try:
+                        Tree(coords)
+                    except:
+                        from resources import Tree
+                        Tree(coords)
                     
 class Worldmap:
     def __init__(self):
         self.worldmap_sprites =  pygame.sprite.Group()
         self.ground_tiles = {}
+        self.noise_squares = {}
+
+        self.active_collision_sprites = pygame.sprite.Group()
     
     def add_sprite(self, sprite, is_ground_tile=False):
         if is_ground_tile:
@@ -113,17 +127,16 @@ class Worldmap:
         ymax = ymin_max[1]
 
         sprites_in_range = []
-        
-        chunk_l = CHUNK_SIZE[0] * math.floor(xmin / CHUNK_SIZE[0])
-        chunk_r = CHUNK_SIZE[0] * math.ceil(xmax / CHUNK_SIZE[0])
 
-        chunk_b = CHUNK_SIZE[1] * math.floor(ymin / CHUNK_SIZE[1])
-        chunk_t = CHUNK_SIZE[1] * math.ceil(ymax / CHUNK_SIZE[1])
+        chunk_l, chunk_r, chunk_b, chunk_t = area_round(CHUNK_SIZE, (xmin, xmax, ymin, ymax))
 
         for chunk_x in range(chunk_l, chunk_r, CHUNK_SIZE[0]):
             for chunk_y in range(chunk_b, chunk_t, CHUNK_SIZE[1]):
-                sprites_in_range.append(self.get_ground_tile((chunk_x, chunk_y+CHUNK_SIZE[1])))
+                chunk = self.get_ground_tile((chunk_x, chunk_y+CHUNK_SIZE[1]))
+                sprites_in_range.append(chunk)
         
+        self.active_collision_sprites = pygame.sprite.Group()
+
         for sprite in self.worldmap_sprites:
             pos = (sprite.rect.centerx, sprite.rect.centery-sprite.rect.h) # idk why, this is just what works
             if not(pos[0] > xmin and pos[0] < xmax): # skip it if its out of x range
@@ -131,21 +144,41 @@ class Worldmap:
             if not(pos[1] > ymin and pos[1] < ymax): # skip it if its out of y range
                 continue
             sprites_in_range.append(sprite)
+            
+            try:
+                if sprite.collision:
+                    self.active_collision_sprites.add(sprite)
+            except:
+                pass
         
-        
-        
-        return sprites_in_range
-
-    def get_object_in_rect(self, camera_rect):
-        sprites_in_range = []
-
-        for sprite in self.worldmap_sprites:
-            if pygame.Rect.colliderect(camera_rect, sprite.rect):
-                sprites_in_range.append(sprite)
-
         return sprites_in_range
 
     def get_all_sprites(self):
         return self.worldmap_sprites
+
+    def get_chunks_at_pos(self, coords):
+
+        cx_min, cx_max, cy_min, cy_max = area_round(CHUNK_SIZE, coords, [CHUNK_SIZE[0]/2, CHUNK_SIZE[1]/2], area=False)
+
+        chunks_to_return = []
+
+        for x in range(cx_min, cx_max, CHUNK_SIZE[0]):
+            for y in range(cy_min, cy_max, CHUNK_SIZE[1]):
+                chunk = self.get_ground_tile((x, y))
+                chunks_to_return.append(chunk)
+
+        return chunks_to_return
+
+    def get_squares_at_coords(self, coords, radius=0):
+        sx_min, sx_max, sy_min, sy_max = area_round([NOISE_DETAIL, NOISE_DETAIL], coords, [radius, radius], area=False)
+        squares_to_return = []
+
+        for x in range(sx_min, sx_max+NOISE_DETAIL, NOISE_DETAIL):
+            for y in range(sy_min, sy_max+NOISE_DETAIL, NOISE_DETAIL):
+                try:
+                    squares_to_return.append(self.noise_squares[(x,y)])
+                except:
+                    pass
+        return squares_to_return
 
 worldmap = Worldmap()

@@ -1,12 +1,11 @@
 from ui_objects import *
 
 from camera import camera
-from game_timer import start_game_timer, update_enemies
 from test_objects import Test_rect
 from player import player
 
 from datetime import datetime
-import math, time, threading
+import math, time, threading, game_timer
 
 vec = pygame.math.Vector2
 
@@ -15,7 +14,7 @@ WIDTH = 1600
 CAMERA_MIN, CAMERA_MAX = 0.25, 3
 
 CONTROLS = {"up":[pygame.K_UP, pygame.K_w], "down":[pygame.K_DOWN, pygame.K_s], "left":[pygame.K_LEFT, pygame.K_a], "right":[pygame.K_RIGHT, pygame.K_d],
-"zoom_in":[pygame.K_z], "zoom_out":[pygame.K_x], "speed_up":[pygame.K_LSHIFT], "super_speed":[pygame.K_LCTRL]}
+"zoom_in":[pygame.K_z], "zoom_out":[pygame.K_x], "speed_up":[pygame.K_LSHIFT], "super_speed":[pygame.K_LCTRL], "shoot":[pygame.K_SPACE]}
 
 def check_control(keys_pressed, key_name):
     if True in [keys_pressed[key] for key in CONTROLS[key_name]]:
@@ -85,7 +84,7 @@ def game_screen_init():
 def game_screen_load():
     global next_screen_button_pressed, camera_x, camera_y, camera_scale
 
-    game_timer_thread = threading.Thread(target=start_game_timer)
+    game_timer_thread = threading.Thread(target=game_timer.start_game_timer)
     game_timer_thread.start()
 
     next_screen_button_pressed = False
@@ -99,8 +98,8 @@ def game_screen_update():
     camera_move_speed = 0.05
     camera_scale_speed = 30
     
-    player.update(check_controls(keys_pressed, ["up", "down", "left", "right"]))
-    update_enemies()
+    player.update(check_controls(keys_pressed, ["up", "down", "left", "right", "shoot"]))
+    game_timer.update_enemies()
 
     if check_control(keys_pressed, "zoom_in"):
         camera_scale = camera_scale*(1+1/camera_scale_speed)
