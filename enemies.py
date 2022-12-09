@@ -9,6 +9,8 @@ class Test_enemy(pygame.sprite.Sprite):
         self.pos = pos
         self.speed = speed
 
+        self.is_enemy = True
+
         if image_path:
             self.surf = pygame.image.load(image_path)
         else:

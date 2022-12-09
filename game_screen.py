@@ -5,7 +5,7 @@ from test_objects import Test_rect
 from player import player
 
 from datetime import datetime
-import math, time, threading, game_timer
+import math, time, threading, game_timer, worldmap
 
 vec = pygame.math.Vector2
 
@@ -88,7 +88,7 @@ def game_screen_load():
     game_timer_thread.start()
 
     next_screen_button_pressed = False
-    camera_x, camera_y, camera_scale = [0.0, 0.0, 1.0]
+    camera_x, camera_y, camera_scale = [0.0, 0.0, 0.3]
 
 def game_screen_update():
     global next_screen_button_pressed, camera_x, camera_y, camera_scale

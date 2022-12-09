@@ -8,11 +8,9 @@ default_font = "freesansbold.ttf" # set this to the font that we want
 def get_font(size, font = default_font):
     return pygame.font.Font(font, size)
 
-
 screens = {} # stores all the screens and their names
 def get_screens(): # returns the screens dict
     return screens
-
 
 class screen: # class for managing differnt screens
     def __init__(self, screen_name, init_func, load_func, update_func):

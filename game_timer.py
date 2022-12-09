@@ -4,8 +4,8 @@ from camera import camera
 from player import player
 #from main import add_thread, remove_thread
 
-DAY_TIME = 20 #seconds
-NIGHT_TIME = 20
+DAY_TIME = 30 #seconds
+NIGHT_TIME = 30
 DAY_CHANGE_TIME = 3
 day_night = "day"
 
