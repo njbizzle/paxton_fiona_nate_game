@@ -1,12 +1,17 @@
-import pygame
+import pygame, math
 from worldmap import worldmap
+from weapon import Laser
+
+DEFAULT_ACCELETATION = 10
+DEFAULT_FRICTION = 0.7
+DEFAULT_MAX_SPEED = 15
 
 def add_vec(vec1, vec2):
     return (vec1[0]+vec2[0], vec1[1]+vec2[1])
 
 class Player(pygame.sprite.Sprite):
     def __init__(self):
-        super(Player, self).__init__()
+        super().__init__()
         
         self.size = (100,100)
 
@@ -14,7 +19,11 @@ class Player(pygame.sprite.Sprite):
         self.surf.fill((255, 211, 67))
         self.rect = self.surf.get_rect()
 
-        self.speed = 10
+        self.vel = (0,0)
+
+        self.acceleration = DEFAULT_ACCELETATION
+        self.friction = DEFAULT_FRICTION
+        self.max_speed = DEFAULT_MAX_SPEED
 
         worldmap.add_sprite(self)
 
@@ -22,20 +31,33 @@ class Player(pygame.sprite.Sprite):
         return self.rect.topleft
 
     def update(self, controls): # controls: up down left right
-        up, down, left, right = controls # bools to see if key pressed
+        up, down, left, right, shoot = controls # bools to see if key pressed
 
-        move_vec = (0,0)
+
+        if "water" in worldmap.get_squares_at_coords((self.get_pos()), 50):
+            self.max_speed = 6
+        else:
+            self.max_speed = DEFAULT_MAX_SPEED
 
         if up:
-            move_vec = add_vec(move_vec, (0, self.speed)) 
+            self.vel = add_vec(self.vel, (0, self.acceleration)) 
         if down:
-            move_vec = add_vec(move_vec, (0, -self.speed))
+            self.vel = add_vec(self.vel, (0, -self.acceleration))
         if right:
-            move_vec = add_vec(move_vec, (self.speed, 0))
+            self.vel = add_vec(self.vel, (self.acceleration, 0))
         if left:
-            move_vec = add_vec(move_vec, (-self.speed, 0))
+            self.vel = add_vec(self.vel, (-self.acceleration, 0))
+        if shoot:
+            laser = Laser(Player.get_pos()) # when space is clicked, laser shoots
 
-        self.rect = pygame.Rect(add_vec(self.get_pos(), move_vec), self.size)
+        if pygame.sprite.spritecollide(self, worldmap.active_collision_sprites, False):
+            print("stuff is colliding but i dont know what do do about it")
+        
+        self.vel = max(-self.max_speed, min(self.vel[0]*self.friction, self.max_speed)), max(-self.max_speed, min(self.vel[1]*self.friction, self.max_speed))
+        self.rect = pygame.Rect(add_vec(self.get_pos(), self.vel), self.size)
+
+    def collide(self):
+        self.vel = (0,0)
 
 
 player = Player()
