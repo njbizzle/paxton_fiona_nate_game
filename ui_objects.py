@@ -37,6 +37,8 @@ class text(pygame.sprite.Sprite): # class for easier text creation
         self.color = color
         self.font = font
 
+        self.alpha = 255
+
         self.update_text(text_content)
         self.rect = self.surf.get_rect(center=pos) # convert position into a rect
 
@@ -45,10 +47,15 @@ class text(pygame.sprite.Sprite): # class for easier text creation
             self.group.add(self)
 
     # changes the text if needed
-    def update_text(self, updated_text):
-        self.text_content = updated_text
-        self.text_size = self.font.size(updated_text)
-        self.surf = self.font.render(self.text_content, False, self.color)
+    def update_text(self, updated_text=None, color=None):
+        if color:
+            self.color = color
+        if updated_text:
+            self.text_content = updated_text
+            self.text_size = self.font.size(updated_text)
+            self.surf = self.font.render(self.text_content, False, self.color)
+
+        self.surf.set_alpha(self.alpha)
 
     # changes the pos if needed
     def update_pos(self, pos):

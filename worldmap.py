@@ -19,17 +19,7 @@ def area_round(size, coords, radius=[0,0], area=True):
                     
 class Worldmap:
     def __init__(self):
-        self.seed = random.randint(0,999999999)
-
-        self.height_map = Noise_map(scale=10000, octaves=3, persistence=0.5, lacunarity=2)
-        self.tree_probability_map = Noise_map(scale=10000, octaves=1, persistence=0.5, lacunarity=2)
-
-        self.worldmap_sprites =  pygame.sprite.Group()
-        self.ground_tiles = {}
-        self.noise_squares = {}
-
-        self.active_collision_sprites = pygame.sprite.Group()
-        self.active_enemy_sprites = pygame.sprite.Group()
+        self.reset()
     
     def reset(self):        
         self.seed = random.randint(0,999999999)
@@ -42,19 +32,31 @@ class Worldmap:
         self.noise_squares = {}
 
         self.active_collision_sprites = pygame.sprite.Group()
-        self.active_enemy_sprites = pygame.sprite.Group()
-        
+        self.enemy_sprites = pygame.sprite.Group()
+
     def add_sprite(self, sprite, is_ground_tile=False):
         if is_ground_tile:
             self.ground_tiles[(sprite.pos)] = sprite
             return
-
+        
+        try:
+            if sprite.is_enemy:
+                self.enemy_sprites.add(sprite)
+        except:
+            pass
+    
         self.worldmap_sprites.add(sprite)
 
     def remove_sprite(self, sprite, is_ground_tile=False):
         if is_ground_tile:
             del self.ground_tiles[(sprite.pos)]
             return
+
+        try:
+            if sprite.is_enemy:
+                self.enemy_sprites.remove(sprite)
+        except:
+            pass
 
         self.worldmap_sprites.remove(sprite)
 
@@ -82,13 +84,16 @@ class Worldmap:
                 sprites_in_range.append(chunk)
         
         self.active_collision_sprites = pygame.sprite.Group()
-        self.active_enemy_sprites = pygame.sprite.Group()
 
         for sprite in self.worldmap_sprites:
             pos = (sprite.rect.centerx, sprite.rect.centery-sprite.rect.h) # idk why, this is just what works
-            if not(pos[0] > xmin and pos[0] < xmax): # skip it if its out of x range
-                continue
-            if not(pos[1] > ymin and pos[1] < ymax): # skip it if its out of y range
+            if not(pos[0] > xmin and pos[0] < xmax) or not(pos[1] > ymin and pos[1] < ymax): # skip it if its out of x or y range
+                try:
+                    sprite.delete_off_screen = True
+                    sprite.delete()
+                    self.remove_sprite(sprite)
+                except:
+                    pass
                 continue
             sprites_in_range.append(sprite)
             
@@ -98,11 +103,6 @@ class Worldmap:
             except:
                 pass
 
-            try:
-                if sprite.is_enemy:
-                    self.active_enemy_sprites.add(sprite)
-            except:
-                pass
         
         return sprites_in_range
 
@@ -173,7 +173,8 @@ class Chunk(pygame.sprite.Sprite):
                 coords = noise_x+self.rect.left, -noise_y+self.rect.top
 
                 height_noise = worldmap.height_map.get_noise(coords)
-                tree_probability = worldmap.tree_probability_map.get_noise(coords)
+                #tree_probability = worldmap.tree_probability_map.get_noise(coords)
+                tree_probability = 0
 
                 height_noise_color = (height_noise+1)*255/2
 
@@ -193,7 +194,8 @@ class Chunk(pygame.sprite.Sprite):
 
                 pygame.draw.rect(self.surf, square_color, sqaure_rect)
 
-                rand = random.randint(0,200)/100
+                #rand = random.randint(0,200)/100
+                rand = 100
                 if rand < (height_noise+tree_probability)/8:
                     try:
                         Tree(coords)

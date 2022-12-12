@@ -1,13 +1,16 @@
 import pygame, math
 from worldmap import worldmap
 from player import player
+from ui_objects import text, get_font
 
 class Test_enemy(pygame.sprite.Sprite):
-    def __init__(self, pos, speed=10, image_path=None, enemy_group=None):
+    def __init__(self, pos, speed=20, image_path=None, enemy_group=None):
         super().__init__()
 
         self.pos = pos
         self.speed = speed
+
+        self.health = 100
 
         self.is_enemy = True
 
@@ -15,9 +18,11 @@ class Test_enemy(pygame.sprite.Sprite):
             self.surf = pygame.image.load(image_path)
         else:
             self.surf = pygame.Surface((100,100))
-        self.rect = self.surf.get_rect(center=self.pos)
+        self.rect = self.surf.get_rect(topleft=self.pos)
 
         self.agro = (0,0)
+
+        self.color = 0
     
         worldmap.add_sprite(self)
 
@@ -41,3 +46,17 @@ class Test_enemy(pygame.sprite.Sprite):
 
         self.pos = update_pos
         self.rect = self.surf.get_rect(center=self.pos)
+
+        self.surf.fill((self.color,0,0))
+        self.surf.blit(get_font(50).render(str(self.health), False, (255,255,255)), (0,0))
+
+        self.color -=10
+        if self.color < 0:
+            self.color = 0
+
+        if pygame.sprite.spritecollide(self, player.lasers, True):
+            self.color = 255
+            self.health -= 10
+        
+        if self.health <= 0:
+            worldmap.remove_sprite(self)
