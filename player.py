@@ -13,7 +13,7 @@ HEALTH_MAX = 100
 STAMINA_LOSS = 2
 STAMINA_REGEN = 1
 
-MAX_AMMO = 10
+MAX_AMMO = 15
 RELOAD_TIME = 0.1
 
 FIRE_RATE = 0.2
@@ -81,11 +81,11 @@ class Player(pygame.sprite.Sprite):
             self.reloading = True
 
         if self.reloading and time.time() > self.reloading_done_time:
-            self.ammo += 1
             if self.ammo >= MAX_AMMO:
                 self.reloading = False
             else:
                 self.reloading_done_time = time.time()+RELOAD_TIME
+                self.ammo += 1
             
         for laser in self.lasers:
             laser.update()

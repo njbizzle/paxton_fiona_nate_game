@@ -17,7 +17,7 @@ CAMERA_MIN, CAMERA_MAX = 0.25, 3
 # controls
 
 CONTROLS = {"up":[pygame.K_UP, pygame.K_w], "down":[pygame.K_DOWN, pygame.K_s], "left":[pygame.K_LEFT, pygame.K_a], "right":[pygame.K_RIGHT, pygame.K_d],
-"zoom_in":[pygame.K_z, pygame.K_PLUS], "zoom_out":[pygame.K_x, pygame.K_MINUS], "sprint":[pygame.K_LSHIFT], "debug1":[pygame.K_n], "debug2":[pygame.K_m], 
+"zoom_in":[pygame.K_z, pygame.K_PLUS], "zoom_out":[pygame.K_x, pygame.K_MINUS], "sprint":[pygame.K_LSHIFT], "debug1":[pygame.K_n], "debug2":[pygame.K_m], "pause":[pygame.K_ESCAPE], 
 "shoot":[pygame.K_SPACE], "reload":[pygame.K_r]}
 
 def check_control(keys_pressed, key_name):
@@ -39,6 +39,24 @@ player_ammo_text = text("ammo: 100", (500,150), (0,0,0), get_font(50), non_camer
 
 wave_number_text = text("wave: 0", (200,150), (0,0,0), get_font(50), non_camera_sprites)
 
+paused_sprites = pygame.sprite.Group()
+
+next_screen = None
+
+paused = False
+paused_last = False
+
+
+def reset_button_click():
+    game_screen_load()
+
+def to_title_screen():
+    global next_screen
+    next_screen = get_screens()["title_screen"]
+
+title_screen_button = button("return to title screen", rect=pygame.Rect((WIDTH/2-200, HEIGHT/2+50), (400,75)), on_click=to_title_screen, group=paused_sprites)
+reset_button = button("reset", rect=pygame.Rect((WIDTH/2-200, HEIGHT/2-100), (400,75)), on_click=reset_button_click, group=paused_sprites)
+
 # debug
 
 debug_sprites = pygame.sprite.Group()
@@ -51,9 +69,6 @@ objects_rendered_text = text("objects_rendered: 0", (200,150+debug_offset_y), (0
 
 show_lines = False
 show_ground = False
-
-def reset_button_click():
-    game_screen_load()
 
 def show_lines_click():
     global show_lines
@@ -73,7 +88,6 @@ def show_ground_click():
         show_ground = True
         show_ground_button.update_text("show ground")
 
-reset_button = button("reset", rect=pygame.Rect((100,200+debug_offset_y), (200,50)), on_click=reset_button_click, group=debug_sprites)
 show_lines_button = button("show lines", rect=pygame.Rect((100,260+debug_offset_y), (200,50)), on_click=show_lines_click, group=debug_sprites)
 show_ground_button = button("hide ground", rect=pygame.Rect((100,320+debug_offset_y), (200,50)), on_click=show_ground_click, group=debug_sprites)
 
@@ -83,47 +97,63 @@ def game_screen_init():
     pass
 
 def game_screen_load():
-    global camera_x, camera_y, camera_scale
+    global camera_x, camera_y, camera_scale, next_screen, paused, paused_last
+
+    next_screen = None
+    paused = False
+    paused_last = False
+    camera.set_dark(False)
+
     worldmap.reset()
     game_timer.reset()
     player.reset()
+
     camera_x, camera_y, camera_scale = [0.0, 0.0, 0.3]
 
 def game_screen_update():
-    next_screen = None
-    global camera_x, camera_y, camera_scale, debug
+    global camera_x, camera_y, camera_scale, debug, paused, paused_last
 
     keys_pressed = pygame.key.get_pressed()
 
     camera_move_speed = 0.05
     camera_scale_speed = 30
+
+    if check_control(keys_pressed, "pause"):
+        if not(paused_last):
+            paused = not(paused)
+            camera.set_dark(paused)
+        paused_last = True
+    else:
+        paused_last = False
+
+    all_sprites = pygame.sprite.Group()
     
-    player.update(check_controls(keys_pressed, ["up", "down", "left", "right", "shoot", "sprint", "reload"]))
-    game_timer.game_timer()
-    worldmap.enemy_sprites.update()
+    if not(paused):
+        player.update(check_controls(keys_pressed, ["up", "down", "left", "right", "shoot", "sprint", "reload"]))
+        game_timer.game_timer()
+        worldmap.enemy_sprites.update()
 
-    if check_control(keys_pressed, "zoom_in"):
-        camera_scale = camera_scale*(1+1/camera_scale_speed)
-    if check_control(keys_pressed, "zoom_out"):
-        camera_scale = camera_scale*(1-1/camera_scale_speed)
+        if check_control(keys_pressed, "zoom_in"):
+            camera_scale = camera_scale*(1+1/camera_scale_speed)
+        if check_control(keys_pressed, "zoom_out"):
+            camera_scale = camera_scale*(1-1/camera_scale_speed)
 
+    camera.update_camera(vec(camera_x, camera_y),vec(WIDTH,HEIGHT), camera_scale, show_lines=show_lines, render_everything=show_ground)
+    displayed_sprites = camera.get_displayed_sprites()
+
+    for sprite in displayed_sprites:
+        all_sprites.add(sprite)
+        
     if camera_scale < CAMERA_MIN:
         camera_scale = CAMERA_MIN
     if camera_scale > CAMERA_MAX:
         camera_scale = CAMERA_MAX
-
-    all_sprites = pygame.sprite.Group()
 
     if check_controls(keys_pressed, ["debug1", "debug2"]) == [True, True]:
         debug = not(debug)
 
     camera_x, camera_y = interpolate((camera_x, camera_y), player.get_pos(), camera_move_speed)
 
-    camera.update_camera(vec(camera_x, camera_y),vec(WIDTH,HEIGHT), camera_scale, show_lines=show_lines, render_everything=show_ground)
-    displayed_sprites = camera.get_displayed_sprites()
-    
-    for sprite in displayed_sprites:
-        all_sprites.add(sprite)
 
     for sprite in non_camera_sprites:
         all_sprites.add(sprite)
@@ -175,6 +205,14 @@ def game_screen_update():
         wave_large_text.update_text()
 
     wave_large_text.alpha -=5
+
+    if paused:
+        for sprite in paused_sprites:
+            all_sprites.add(sprite)
+            try:
+                sprite.check_click()
+            except:
+                pass
 
     return {"sprite_group":all_sprites, "next_screen":next_screen}
 

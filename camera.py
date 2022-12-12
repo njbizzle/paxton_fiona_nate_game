@@ -9,7 +9,7 @@ CAMERA_LINE_WIDTH = 1
 CAMERA_LINE_COLOR = (200,200,200)
 CAMERA_LINES_GRID_SIZE = (100,100)
 
-TIME_CHANGE_SPEED = 1
+TIME_CHANGE_SPEED = 10
     
 class Empty_sprite(pygame.sprite.Sprite):
     def __init__(self, surf, rect):
@@ -27,7 +27,7 @@ class Camera:
         self.show_lines = False
         self.show_ground = False
 
-        self.is_night = False
+        self.is_dark = False
 
         self.wall_l = 0
         self.wall_l_buffer = 0
@@ -56,8 +56,8 @@ class Camera:
         self.show_lines = show_lines
 
 
-    def set_night(self, is_night):
-        self.is_night = is_night
+    def set_dark(self, is_dark):
+        self.is_dark = is_dark
 
     def get_displayed_sprites(self):
         display_tile_h = self.size.x/self.wm_scale
@@ -105,7 +105,7 @@ class Camera:
                 
             visable_sprites_camera.append(lines)
         
-        if self.is_night:
+        if self.is_dark:
             if self.dark_screen_opacity != self.dark_screen_night_opacity:
                 self.dark_screen_opacity+=TIME_CHANGE_SPEED
         else:

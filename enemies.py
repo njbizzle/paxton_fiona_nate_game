@@ -10,7 +10,7 @@ class Test_enemy(pygame.sprite.Sprite):
         self.pos = pos
         self.speed = speed
 
-        self.health = 100
+        self.health = 50
 
         self.is_enemy = True
 
