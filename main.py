@@ -6,8 +6,7 @@ from ui_objects import *
 pygame.init()
 
 # constants
-HEIGHT = 900
-WIDTH = 1600
+WIDTH,HEIGHT = get_screen_size()
 FPS = 60
 
 FramePerSec = pygame.time.Clock()
@@ -16,8 +15,10 @@ FramePerSec = pygame.time.Clock()
 displaysurface = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Game")
 
-import title_screen, game_screen # runs the files and create the screen objects
+import title_screen, game_screen, tutorial_screen, game_over_screen # runs the files and create the screen objects
 
+def quit():
+    pygame.quit()
 
 def start():
     current_screen = get_screens()["title_screen"] # set the first screen
@@ -28,8 +29,7 @@ def start():
 
         for event in pygame.event.get(): # check if you quit
             if event.type == QUIT:
-                pygame.quit()
-                sys.exit()
+                quit()
         
         update_info = current_screen.update() # runs update on the current screen
 
