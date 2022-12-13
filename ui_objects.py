@@ -2,10 +2,16 @@ import pygame
 pygame.init()
 pygame.font.init()
 
+HEIGHT = 900
+WIDTH = 1600
+
+def get_screen_size():
+    return (WIDTH, HEIGHT)
+
 # font setup
 default_font = "freesansbold.ttf" # set this to the font that we want
 # easier way to get fonts
-def get_font(size, font = default_font):
+def get_font(size, font=default_font):
     return pygame.font.Font(font, size)
 
 screens = {} # stores all the screens and their names
@@ -32,7 +38,7 @@ class screen: # class for managing differnt screens
         self.load_func()
 
 class text(pygame.sprite.Sprite): # class for easier text creation
-    def __init__(self, text_content, pos, color=(255,255,255), font=get_font(20), group = None):
+    def __init__(self, text_content, pos, color=(255,255,255), font=get_font(20), group=None):
         pygame.sprite.Sprite.__init__(self) # inherits the pygame sprite class
         self.color = color
         self.font = font
@@ -63,7 +69,7 @@ class text(pygame.sprite.Sprite): # class for easier text creation
         self.update_text(self.text_content)
 
 class button(pygame.sprite.Sprite): # easier button creation
-    def __init__(self, text_content, position=None, size=None, rect=None, bg_color = (100,100,100), text_color=(0,0,0), on_hover=None, on_press=None, on_click=None, group = None):
+    def __init__(self, text_content, position=None, size=None, rect=None, bg_color = (100,100,100), text_color=(0,0,0), on_hover=None, on_press=None, on_click=None, group = None, font=20):
         pygame.sprite.Sprite.__init__(self)
         self.position = position
         self.size = size
@@ -79,7 +85,7 @@ class button(pygame.sprite.Sprite): # easier button creation
         self.text_color = text_color
 
         self.text_content = text_content
-        self.text_sprite = text(text_content, (0,0), color=self.text_color) # uses text class to render the text
+        self.text_sprite = text(text_content, (0,0), color=self.text_color, font=get_font(font)) # uses text class to render the text
 
         self.draw_surf()
 
