@@ -1,4 +1,4 @@
-import pygame, noise, math, random
+import pygame, math, random
 from perlin_noise import PerlinNoise
 CHUNK_SIZE = (500, 500)
 NOISE_DETAIL = 100 # size of noise rects

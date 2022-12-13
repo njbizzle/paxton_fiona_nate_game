@@ -1,48 +1,45 @@
 from ui_objects import *
 from datetime import datetime
 
+WIDTH,HEIGHT = get_screen_size()
+
 all_sprites = pygame.sprite.Group()
 
-time_init = text("0", (200,100), (0,255,0), get_font(30), all_sprites)
-time_loaded = text("0", (200,200), (0,255,0), get_font(30), all_sprites)
-time_update = text("0", (200,300), (0,255,0), get_font(30), all_sprites)
+next_screen = None
 
-next_screen_button_pressed = False
+def game_screen_click():
+    global next_screen
+    next_screen = get_screens()["game_screen"]
 
-def next_screen_button_click():
-    global next_screen_button_pressed
-    next_screen_button_pressed = True
+def tutorial_screen_click():
+    global next_screen
+    next_screen = get_screens()["tutorial_screen"]
 
-next_screen_button = button("to game screen", rect=pygame.Rect((500,500),(200,50)), on_click=next_screen_button_click, group=all_sprites)
-test_slider = slider(pygame.Rect((500,350),(300,100)), 0, 50, 250, text_content="test", group=all_sprites)
+def quit_click():
+    from main import quit
+    quit()
 
+title = text("name of the game or something idk", (WIDTH/2, HEIGHT*0.3), (0,0,0), font=get_font(70), group=all_sprites)
 
-def update_time(text_sprite):
-    text_sprite.update_text(f"{str(datetime.now())} title screen")
+game_screen_button = button("PLAY GAME", rect=pygame.Rect((WIDTH/2-200,HEIGHT*0.55),(400,100)), on_click=game_screen_click, font=50, group=all_sprites)
+tutorial_screen_button = button("tutorial", rect=pygame.Rect((WIDTH/2-150,HEIGHT*0.7),(300,70)), on_click=tutorial_screen_click, font=30, group=all_sprites)
+quit_button = button("quit game", rect=pygame.Rect((WIDTH/2-100,HEIGHT*0.85),(200,50)), on_click=quit_click, font=20, group=all_sprites)
 
 def title_screen_init():
-    global time_init
-    update_time(time_init)
+    pass
 
 def title_screen_load():
-    global time_loaded, next_screen_button_pressed
-
-    update_time(time_loaded)
-    next_screen_button_pressed = False
+    global next_screen
+    next_screen = None
 
 def title_screen_update():
-    global time_update
+    global next_screen
 
-    keys_pressed = pygame.key.get_pressed()
-
-    next_screen_button.check_click()
-    if next_screen_button_pressed == True:
-        next_screen = get_screens()["game_screen"]
-    else:
-        next_screen = None
-    
-    update_time(time_update)
-    test_slider.get_knob_value()
+    for sprite in all_sprites:
+        try:
+            sprite.check_click()
+        except:
+            pass
 
     return {"sprite_group":all_sprites, "next_screen":next_screen}
 

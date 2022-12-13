@@ -2,22 +2,22 @@ from ui_objects import *
 
 from camera import camera
 from test_objects import Test_rect
-from player import player
+from player import player, swap_to_god_weapon
 from worldmap import worldmap
 
 from datetime import datetime
-import game_timer
+import game_timer, game_over_screen
 
 vec = pygame.math.Vector2
 
-HEIGHT = 900
-WIDTH = 1600
+WIDTH,HEIGHT = get_screen_size()
+
 CAMERA_MIN, CAMERA_MAX = 0.25, 3
 
 # controls
 
 CONTROLS = {"up":[pygame.K_UP, pygame.K_w], "down":[pygame.K_DOWN, pygame.K_s], "left":[pygame.K_LEFT, pygame.K_a], "right":[pygame.K_RIGHT, pygame.K_d],
-"zoom_in":[pygame.K_z, pygame.K_PLUS], "zoom_out":[pygame.K_x, pygame.K_MINUS], "sprint":[pygame.K_LSHIFT], "debug1":[pygame.K_n], "debug2":[pygame.K_m], "pause":[pygame.K_ESCAPE], 
+"zoom_in":[pygame.K_z, pygame.K_o], "zoom_out":[pygame.K_x, pygame.K_p], "sprint":[pygame.K_LSHIFT], "debug1":[pygame.K_n], "debug2":[pygame.K_m], "pause":[pygame.K_ESCAPE], 
 "shoot":[pygame.K_SPACE], "reload":[pygame.K_r]}
 
 def check_control(keys_pressed, key_name):
@@ -46,7 +46,6 @@ next_screen = None
 paused = False
 paused_last = False
 
-
 def reset_button_click():
     game_screen_load()
 
@@ -54,8 +53,15 @@ def to_title_screen():
     global next_screen
     next_screen = get_screens()["title_screen"]
 
-title_screen_button = button("return to title screen", rect=pygame.Rect((WIDTH/2-200, HEIGHT/2+50), (400,75)), on_click=to_title_screen, group=paused_sprites)
-reset_button = button("reset", rect=pygame.Rect((WIDTH/2-200, HEIGHT/2-100), (400,75)), on_click=reset_button_click, group=paused_sprites)
+def return_click():
+    global paused
+    
+    paused = False
+    camera.set_dark(False)
+
+return_button = button("return to game", rect=pygame.Rect((WIDTH/2-200, HEIGHT/2-100), (400,75)), on_click=return_click, group=paused_sprites)
+title_screen_button = button("return to title screen", rect=pygame.Rect((WIDTH/2-200, HEIGHT/2), (400,75)), on_click=to_title_screen, group=paused_sprites)
+reset_button = button("reset", rect=pygame.Rect((WIDTH/2-200, HEIGHT/2+100), (400,75)), on_click=reset_button_click, group=paused_sprites)
 
 # debug
 
@@ -88,6 +94,7 @@ def show_ground_click():
         show_ground = True
         show_ground_button.update_text("show ground")
 
+god_weapon_button = button("god weapon", rect=pygame.Rect((100,200+debug_offset_y), (200,50)), on_click=swap_to_god_weapon, group=debug_sprites)
 show_lines_button = button("show lines", rect=pygame.Rect((100,260+debug_offset_y), (200,50)), on_click=show_lines_click, group=debug_sprites)
 show_ground_button = button("hide ground", rect=pygame.Rect((100,320+debug_offset_y), (200,50)), on_click=show_ground_click, group=debug_sprites)
 
@@ -96,13 +103,17 @@ show_ground_button = button("hide ground", rect=pygame.Rect((100,320+debug_offse
 def game_screen_init():
     pass
 
-def game_screen_load():
+def game_screen_load(die=False):
     global camera_x, camera_y, camera_scale, next_screen, paused, paused_last
 
     next_screen = None
     paused = False
     paused_last = False
     camera.set_dark(False)
+
+    if die:
+        next_screen = get_screens()["game_over_screen"]
+        game_over_screen.set_wave(game_timer.get_wave())
 
     worldmap.reset()
     game_timer.reset()

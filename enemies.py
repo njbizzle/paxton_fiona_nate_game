@@ -54,9 +54,10 @@ class Test_enemy(pygame.sprite.Sprite):
         if self.color < 0:
             self.color = 0
 
-        if pygame.sprite.spritecollide(self, player.lasers, True):
-            self.color = 255
-            self.health -= 10
+        for laser in player.lasers:
+            if pygame.sprite.collide_rect(self, laser):
+                self.color = 255
+                self.health -= laser.damage
         
         if self.health <= 0:
             worldmap.remove_sprite(self)
