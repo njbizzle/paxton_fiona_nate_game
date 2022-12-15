@@ -19,11 +19,10 @@ def quit_click():
     from main import quit
     quit()
 
-title = text("name of the game or something idk", (WIDTH/2, HEIGHT*0.3), (0,0,0), font=get_font(70), group=all_sprites)
 
-game_screen_button = button("PLAY GAME", rect=pygame.Rect((WIDTH/2-200,HEIGHT*0.55),(400,100)), on_click=game_screen_click, font=50, group=all_sprites)
-tutorial_screen_button = button("tutorial", rect=pygame.Rect((WIDTH/2-150,HEIGHT*0.7),(300,70)), on_click=tutorial_screen_click, font=30, group=all_sprites)
-quit_button = button("quit game", rect=pygame.Rect((WIDTH/2-100,HEIGHT*0.85),(200,50)), on_click=quit_click, font=20, group=all_sprites)
+game_screen_button = button("PLAY GAME", rect=pygame.Rect((WIDTH/2-200,HEIGHT*0.4),(400,100)), on_click=game_screen_click, font=50, group=all_sprites)
+tutorial_screen_button = button("tutorial", rect=pygame.Rect((WIDTH/2-150,HEIGHT*0.55),(300,70)), on_click=tutorial_screen_click, font=30, group=all_sprites)
+quit_button = button("quit game", rect=pygame.Rect((WIDTH/2-100,HEIGHT*0.7),(200,50)), on_click=quit_click, font=20, group=all_sprites)
 
 def title_screen_init():
     pass

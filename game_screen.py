@@ -49,19 +49,19 @@ paused_last = False
 def reset_button_click():
     game_screen_load()
 
-def to_title_screen():
-    global next_screen
-    next_screen = get_screens()["title_screen"]
-
 def return_click():
     global paused
     
     paused = False
     camera.set_dark(False)
 
+def to_title_screen():
+    global next_screen
+    next_screen = get_screens()["title_screen"]
+
 return_button = button("return to game", rect=pygame.Rect((WIDTH/2-200, HEIGHT/2-100), (400,75)), on_click=return_click, group=paused_sprites)
-title_screen_button = button("return to title screen", rect=pygame.Rect((WIDTH/2-200, HEIGHT/2), (400,75)), on_click=to_title_screen, group=paused_sprites)
-reset_button = button("reset", rect=pygame.Rect((WIDTH/2-200, HEIGHT/2+100), (400,75)), on_click=reset_button_click, group=paused_sprites)
+reset_button = button("reset", rect=pygame.Rect((WIDTH/2-200, HEIGHT/2), (400,75)), on_click=reset_button_click, group=paused_sprites)
+title_screen_button = button("return to title screen", rect=pygame.Rect((WIDTH/2-200, HEIGHT/2+100), (400,75)), on_click=to_title_screen, group=paused_sprites)
 
 # debug
 

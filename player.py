@@ -5,8 +5,8 @@ from camera import camera
 
 DEFAULT_ACCELETATION = 10
 DEFAULT_FRICTION = 0.9
-DEFAULT_MAX_SPEED = 15
-SPRINT_MAX_SPEED = 25
+DEFAULT_MAX_SPEED = 10
+SPRINT_MAX_SPEED = 20
 
 STAMINA_MAX = 100
 HEALTH_MAX = 100
@@ -16,7 +16,7 @@ STAMINA_REGEN = 1
 LAUNCH_DIST = 100
 IFRAMES_TIME = 1.5
 
-default = {"ammo":15, "reload_time":0.1, "bullet_count":1, "bloom":0, "size":30, "damage":10, "speed":100, "fire_rate":0.2} 
+default = {"ammo":15, "reload_time":0.1, "bullet_count":1, "bloom":0.1, "size":50, "damage":10, "speed":75, "fire_rate":0.2} 
 god_weapon = {"ammo":100, "reload_time":0.01, "bullet_count":10, "bloom":0.5, "size":50, "damage":1, "speed":50, "fire_rate":0.01} 
 
 def swap_to_god_weapon():
